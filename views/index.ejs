@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta name="referrer" content="always" />
+  <meta name="description" content="TailwindCSS Ecommerce Template" />
+  <link rel="stylesheet" href="../dist/main.css" />
+  <link href="https://unpkg.com/css.gg/icons/all.css" rel="stylesheet" />
+  <link id="favicon" rel="icon" type="image/png" href="/images/favicon.png">
+  <script src="//unpkg.com/alpinejs" defer></script>
+  <script src="../public/js/main.js" defer></script>
+  <script src="/public/js/index.js" defer></script>
+  <!-- views/index.ejs -->
+  <script>
+    document.getElementById('search-input').addEventListener('input', function () {
+      const query = this.value;
+      if (query.length > 0) {
+        fetch(`/search/suggestions?query=${query}`)
+          .then(response => response.json())
+          .then(data => {
+            const suggestionsContainer = document.getElementById('suggestions');
+            suggestionsContainer.innerHTML = '';
+            if (data.products.length > 0) {
+              data.products.forEach(product => {
+                const suggestionItem = document.createElement('div');
+                suggestionItem.classList.add('p-2', 'hover:bg-gray-200', 'cursor-pointer');
+                suggestionItem.innerHTML = `
+                              <div class="flex items-center">
+                                  <img src="${product.imageurl}" alt="${product.name}" class="h-10 w-10 object-cover mr-2">
+                                  <div>
+                                      <p class="text-sm font-medium">${product.name}</p>
+                                      <p class="text-xs text-gray-500">${product.price}</p>
+                                  </div>
+                              </div>
+                          `;
+                suggestionItem.addEventListener('click', () => {
+                  window.location.href = `/product/${product.id}`;
+                });
+                suggestionsContainer.appendChild(suggestionItem);
+              });
+              suggestionsContainer.classList.remove('hidden');
+            } else {
+              suggestionsContainer.classList.add('hidden');
+            }
+          });
+      } else {
+        document.getElementById('suggestions').classList.add('hidden');
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <!-- #region Header -->
+  <%- include('layouts/mainLayout', { content: locals.body }) %>
+  <!-- #endregion Header -->
+   
+  <div x-data="{ cartOpen: false , isOpen: false }">
+      <div :class="cartOpen ? 'translate-x-0 ease-out' : 'translate-x-full ease-in'"
+        class="fixed right-0 top-0 max-w-xs w-full h-full px-6 py-4 transition duration-300 transform overflow-y-auto bg-white border-l-2 border-gray-300 hidden"
+        x-init="() => { $el.classList.remove('hidden'); }">
+        <div class="flex items-center justify-between">
+          <h3 class="text-2xl font-medium text-gray-700">Your cart</h3>
+          <button @click="cartOpen = !cartOpen" class="text-gray-600 focus:outline-none">
+            <i class="gg-close"></i>
+          </button>
+        </div>
+        <hr class="my-3" />
+        <div class="flex justify-between mt-6">
+          <div class="flex">
+            <img class="h-20 w-20 object-cover" src="images/tshirt-front-white-small.png" alt="" />
+            <div class="mx-3">
+              <h3 class="text-sm text-gray-600">T-Shirt</h3>
+              <div class="flex items-center mt-2">
+                <button class="text-gray-500 focus:outline-none focus:text-gray-600">
+                  <i class="gg-remove"></i>
+                </button>
+                <span class="text-gray-700 mx-2">2</span>
+                <button class="text-gray-500 focus:outline-none focus:text-gray-600">
+                  <i class="gg-add"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <span class="text-gray-600">$24.99</span>
+        </div>
+        <a
+          class="flex cursor-pointer items-center justify-center mt-4 px-3 py-2 bg-green-700 text-white text-sm uppercase font-medium hover:bg-green-500 focus:outline-none focus:bg-green-500">
+          <span>Checkout</span>
+          <i class="px-2 gg-arrow-right"></i>
+        </a>
+      </div>
+      <!-- #endregion Cart -->
+
+      <main class="my-8">
+        <!-- #region Body -->
+        <div class="container grid grid-cols-4 gap-6 pt-4 pb-16 items-start mx-auto">
+          <!-- #region Sidebar -->
+          <%- include('layouts/filter') %>
+          <%- include('layouts/sort_filter') %>
+          <!-- #endregion Sidebar -->
+
+          <!-- #region Products -->
+          <div class="col-span-3">
+            <div class="flex items-center mb-4"></div>
+
+            <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <% products.forEach( product => { %>
+                <div class="bg-white shadow-md flex flex-col h-full rounded-lg">
+                  <!-- Phần hình ảnh sản phẩm -->
+                  <div class="relative group w-full h-80 flex items-center justify-center">
+                    <img src="<%= product.imageurl %>" alt="<%= product.name %>" class="max-w-full max-h-full" />
+                    <a href="/category/<%= product.type_name %>/<%= product.id %>">
+                      <div
+                        class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
+                      </div>
+                    </a>
+                  </div>
+
+                  <div class="flex-grow pt-4 pb-3 px-4 flex flex-col">
+                    <!-- Tên sản phẩm -->
+                    <a href="/category/<%= product.type_name %>/<%= product.id %>">
+                      <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition">
+                        <%= product.name %>
+                      </h4>
+                    </a>
+
+                    <div class="flex justify-between mb-1 space-x-2">
+                      <p class="text-xl text-primary font-semibold">
+                        <%= product.brand %>
+                      </p>
+                      <% if (product.numberofpro > 0) {%>
+                        <p class="text-right text-base text-green-600">In stock</p>
+                      <% }else{ %>
+                        <p class="text-right text-base text-red-600">Out of stock</p>
+                      <% } %>
+                    </div>
+
+                    <div class="flex items-baseline mb-1 space-x-2">
+                      <p class="text-xl text-primary font-semibold">
+                        $<%= product.price %>
+                      </p>
+
+                      <% if (product.discount > 0) {%>
+                          <p class="text-base text-red-600 font-extrabold">-<%= product.discount %>%</p>
+                      <% } %>
+                    </div>
+                    
+                    <div class="flex gap-1 text-sm text-yellow-400">
+                      <i class="star"></i>
+                      <i class="star"></i>
+                      <i class="star"></i>
+                      <i class="star"></i>
+                      <i class="star"></i>
+                    </div>
+                  </div> 
+
+                  <!-- Nút Add to Cart -->
+                  <a href="#"
+                    class="block w-full py-3 mt-auto text-center text-white bg-green-700 border border-primary hover:bg-green-500 transition">
+                    Add to cart
+                  </a>
+                </div>
+                <% }); %>
+
+            </div>
+            <!-- #endregion Products -->
+
+            <!-- #region Pagination -->
+            <%- include('layouts/paging') %>
+            <!-- #endregion Pagination -->
+          </div>
+                     
+        </div>
+      </main>                  
+    </div>
+
+
+      <!-- #region Footer-->
+      <%- include('layouts/footer') %>
+      <!-- #endregion Footer -->
+       
+  </div>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/js/filterHandlingAndPaginationAJAX.js"></script>
+  <Script src="/js/searchWithAJAXHandling.js"></Script>
+</body>
+
+</html>

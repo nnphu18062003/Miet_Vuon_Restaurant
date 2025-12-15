@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta name="referrer" content="always" />
+  <meta name="description" content="TailwindCSS Ecommerce Template" />
+  <link href="//fonts.googleapis.com/css?family=Righteous" rel="stylesheet" />
+  <link href="//fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300i,700" rel="stylesheet" />
+  <link href="//fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/all.min.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link id="favicon" rel="icon" type="image/png" href="/images/favicon.png">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../dist/main.css" />
+</head>
+
+<body>
+  <div>
+  <!-- #region Header -->
+  <%- include('layouts/mainLayout', { content: locals.body }) %>
+  <%- include('layouts/search')%>
+
+  <input type="hidden" id="user-id" value="<%= user_id %>">
+
+  <!-- #endregion Header -->
+   <!-- Hình của trang chủ -->
+   <div class="relative flex items-center justify-center overflow-hidden w-full" style=" height: 700px;">
+    <div id="imageSlider" class="flex transition-transform duration-500 ease-in-out" style="width: 100%; height: 100%;">
+      <img src="/images/homepage1.png" alt="Homepage 1" class="flex-shrink-0 w-full h-full object-cover">
+      <img src="/images/homepage2.png" alt="Homepage 2" class="flex-shrink-0 w-full h-full object-cover">
+      <img src="/images/homepage3.png" alt="Homepage 3" class="flex-shrink-0 w-full h-full object-cover">
+      <img src="/images/homepage4.png" alt="Homepage 4" class="flex-shrink-0 w-full h-full object-cover">
+      <img src="/images/homepage5.png" alt="Homepage 5" class="flex-shrink-0 w-full h-full object-cover">
+    </div>
+    <!-- Nút chuyển ảnh -->
+    <button id="prev" class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-gray-600/80 hover:bg-gray-700 text-white px-4 py-2 rounded-full text-2xl font-bold transition-colors z-10">‹</button>
+    <button id="next" class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-gray-600/80 hover:bg-gray-700 text-white px-4 py-2 rounded-full text-2xl font-bold transition-colors z-10">›</button>
+  </div>  
+
+  <div class="flex-grow  py-4 flex flex-col justify-center items-center mt-8">
+    <h2 class="uppercase font-bold text-2xl  text-gray-800 text-center transition">
+     Bán chạy nhất
+    </h2>
+  </div>
+  
+  <main class="mb-8">
+    <!-- #region Body -->
+    <div class="container grid grid-cols-4 gap-8  pb-16 items-start mx-auto">
+      
+      <!-- #region Products -->
+      <div class="col-span-4">
+        <div class="flex items-center mb-4"></div>
+
+        <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <% products.forEach( product => { %>
+            <div class="bg-white shadow-md flex flex-col h-full rounded-lg">
+              <!-- Phần hình ảnh sản phẩm -->
+              <div class="relative group w-full h-80 flex items-center justify-center">
+                <img src="<%= product.product_url %>" alt="<%= product.name %>" class="max-w-full max-h-full" />
+                <a href="/category/<%= product.product_id %>">
+                  <div
+                    class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
+                  </div>
+                </a>
+              </div>
+
+              <div class="flex-grow pt-4 pb-3 px-4 flex flex-col">
+                <!-- Tên sản phẩm -->
+                <a href="/category/<%= product.type_name %>/<%= product.id %>">
+                  <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition">
+                    <%= product.name %>
+                  </h4>
+                </a>
+
+                <div class="flex justify-between mb-1 space-x-2">
+                  <p class="text-xl text-primary font-semibold">
+                    <%= product.brand %>
+                  </p>
+                 
+                </div>
+
+                <div class="flex items-baseline mb-1 space-x-2">
+                  <p class="text-xl text-primary font-semibold">
+                    <% if (product.is_discount_active && product.discount> 0) { %>
+                      <div class="flex items-center space-x-2">
+                          <span class="text-gray-500 line-through text-sm">
+                              <%= parseInt(product.price).toLocaleString('vi-VN') %>VNĐ
+                          </span>
+                          <span class="text-red-500 font-bold">
+                              <%= parseInt(product.price * (1 -
+                              product.discount/100)).toLocaleString('vi-VN') %>VNĐ
+                          </span>
+                      </div>
+                      <% } else { %>
+                          <div class="text-gray-800 font-bold">
+                              <%= parseInt(product.price).toLocaleString('vi-VN') %>VNĐ
+                          </div>
+                          <% } %>
+                  </p>
+                </div>
+              </div> 
+
+              <!-- Nút Add to Cart -->
+              <a href="#"
+                    class="add-to-cart-btn block w-full py-3 mt-auto text-center text-white bg-[#43A047]  hover:bg-[#b87434] transition rounded-b-lg"
+                    data-product-id="<%= product.product_id %>"
+                    data-product-price="<%= product.price %>">
+                    Thêm vào giỏ hàng
+              </a>
+            </div>
+            <% }); %>
+
+        </div>
+      </div>
+                 
+    </div>
+  </main>   
+  <!-- Di chuyển ảnh -->
+  <script src="/js/cart.js"></script>
+  <script>
+    const slider = document.getElementById("imageSlider");
+    const prevBtn = document.getElementById("prev");
+    const nextBtn = document.getElementById("next");
+  
+    let currentIndex = 0; // Vị trí ảnh hiện tại
+    let autoSlideInterval; // Biến lưu interval tự động chuyển slide
+  
+    function updateSlider() {
+      const offset = currentIndex * -100; // Dịch chuyển -100% mỗi slide
+      slider.style.transform = `translateX(${offset}%)`;
+    }
+  
+    function nextSlide() {
+      if (currentIndex < slider.children.length - 1) {
+        currentIndex++;
+      } else {
+        currentIndex = 0; // Quay lại ảnh đầu tiên
+      }
+      updateSlider();
+    }
+  
+    function prevSlide() {
+      if (currentIndex > 0) {
+        currentIndex--;
+      } else {
+        currentIndex = slider.children.length - 1; // Chuyển đến ảnh cuối cùng
+      }
+      updateSlider();
+    }
+  
+    nextBtn.addEventListener("click", () => {
+      nextSlide();
+      resetAutoSlide(); // Reset timer khi người dùng click
+    });
+  
+    prevBtn.addEventListener("click", () => {
+      prevSlide();
+      resetAutoSlide(); // Reset timer khi người dùng click
+    });
+  
+    // Tự động chuyển slide sau mỗi 5 giây
+    function startAutoSlide() {
+      autoSlideInterval = setInterval(() => {
+        nextSlide();
+      }, 5000);
+    }
+  
+    // Reset auto slide timer
+    function resetAutoSlide() {
+      clearInterval(autoSlideInterval);
+      startAutoSlide();
+    }
+  
+    // Bắt đầu auto slide khi trang load
+    startAutoSlide();
+  
+    // Dừng auto slide khi hover vào slider
+    slider.addEventListener("mouseenter", () => {
+      clearInterval(autoSlideInterval);
+    });
+  
+    // Tiếp tục auto slide khi rời chuột
+    slider.addEventListener("mouseleave", () => {
+      startAutoSlide();
+    });
+  </script>
+  
+  <div class="bg-[#748873] text-white h-[400px] flex items-center justify-center">
+    <div class="container mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+      <!-- Tính năng 1: Thức ăn tươi -->
+      <div>
+        <div class="flex items-center justify-center w-20 h-20 mx-auto bg-[#DEE8CE] rounded-full mb-4">
+          <i class="fas fa-utensils text-4xl text-black"></i>
+        </div>
+        <h3 class="text-3xl font-bold text-[#DEE8CE] uppercase">Thức ăn chuẩn</h3>
+        <h3 class="text-3xl font-bold text-[#DEE8CE] uppercase">tươi ngon 100%</h3>
+        <p>Thưởng thức món ăn Việt Nam tươi ngon ngay trong ngày.</p>
+      </div>
+  
+      <!-- Tính năng 2: Mát lạnh -->
+      <div>
+        <div class="flex items-center justify-center w-20 h-20 mx-auto bg-[#DEE8CE] rounded-full mb-4">
+          <i class="fas fa-glass-whiskey text-4xl text-black"></i>
+        </div>
+        <h3 class="text-3xl font-bold text-[#DEE8CE] uppercase"> Thức uống mát lạnh</h3>
+        <h3 class="text-3xl font-bold text-[#DEE8CE] uppercase"> Sảng khoái</h3>
+        <p>Ly nước mát lạnh, tự nhiên kết hợp với món ăn yêu thích mang lại cảm giác thật yomost.</p>
+      </div>
+  
+      <!-- Tính năng 3: Dịch vụ chuyên nghiệp -->
+      <div>
+        <div class="flex items-center justify-center w-20 h-20 mx-auto bg-[#DEE8CE] rounded-full mb-4">
+          <i class="fas fa-bell text-4xl text-black"></i>
+        </div>
+        <h3 class="text-3xl font-bold text-[#DEE8CE] uppercase">Dịch vụ chuyên nghiệp</h3>
+        <h3 class="text-3xl font-bold text-[#DEE8CE] uppercase">Không gian mát mẻ</h3>
+        <p>Trải nghiệm sự phục tận tình cùng không gian thông thoáng cực thư giãn.</p>
+      </div>
+    </div>
+  </div>  
+  
+  
+  <!-- #region Footer-->
+  <%- include('layouts/footer') %>
+  <!-- #endregion Footer -->
+   </div>
+   <Script src="/js/searchWithAJAXHandling.js"></Script>
+</body>
+</html>

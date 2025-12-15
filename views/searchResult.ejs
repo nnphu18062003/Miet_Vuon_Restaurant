@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>
+    <%= title %>
+  </title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta name="referrer" content="always" />
+  <meta name="description" content="Search Results" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="//fonts.googleapis.com/css?family=Righteous" rel="stylesheet" />
+  <link href="//fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300i,700" rel="stylesheet" />
+  <link href="//fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/all.min.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link id="favicon" rel="icon" type="image/png" href="/images/favicon.png">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../dist/main.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+  <div x-data="{ cartOpen: false , isOpen: false }">
+
+    <!-- #region Header -->
+    <%- include('layouts/mainLayout', { content: locals.body }) %>
+    <!-- #endregion Header -->
+
+    <!-- #region Search -->
+    <%- include('layouts/search')%>
+    <!-- #endregion Search -->
+    <input type="hidden" id="user-id" value="<%= user_id %>">
+
+    <main class="my-8">
+      <!-- #region Body -->
+      <div class="container grid grid-cols-4 gap-6 pt-4 pb-16 items-start mx-auto">
+       
+        <!-- #region Products -->
+        <div class="col-span-4">
+          <div class="flex items-center mb-4"></div>
+          <h1 id="search-query" class="text-2xl font-semibold mb-6">
+            Search Results for "<%= query %>"
+          </h1>
+          <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <% products.forEach( product => { %>
+              
+              <div class="bg-white shadow-md flex flex-col h-full rounded-lg">
+                <!-- Phần hình ảnh sản phẩm -->
+                <div class="relative group w-full h-80 flex items-center justify-center">
+                  <img src="<%= product.product_url %>" alt="<%= product.name %>" class="max-w-full max-h-full" />
+                  <a href="/category/<%= product.product_id %>">
+                    <div
+                      class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
+                    </div>
+                  </a>
+                </div>
+
+                <div class="flex-grow pt-4 pb-3 px-4 flex flex-col">
+                  <!-- Tên sản phẩm -->
+                  <a href="/category/<%= product.product_id %>">
+                    <h4 class="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition">
+                      <%= product.name %>
+                    </h4>
+                  </a>
+                  <div class="flex items-baseline mb-1 space-x-2">
+                    <p class="text-xl text-primary font-semibold">
+                      <% if (product.is_discount_active && product.discount> 0) { %>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-gray-500 line-through text-sm">
+                                <%= parseInt(product.price).toLocaleString('vi-VN') %>đ
+                            </span>
+                            <span class="text-red-500 font-bold">
+                                <%= parseInt(product.price * (1 -
+                                product.discount/100)).toLocaleString('vi-VN') %>đ
+                            </span>
+                        </div>
+                        <% } else { %>
+                            <div class="text-gray-800 font-bold">
+                                <%= parseInt(product.price).toLocaleString('vi-VN') %>đ
+                            </div>
+                            <% } %>
+                    </p>
+
+                  </div>
+                </div> 
+
+                <a href="#"
+                  class="add-to-cart-btn block w-full py-3 mt-auto text-center text-white bg-[#43A047]  hover:bg-[#b87434] transition rounded-b-lg"
+                  data-product-id="<%= product.product_id %>"
+                  data-product-price="<%= product.price %>">
+                  Thêm vào giỏ hàng
+                </a>
+              </div>
+              <% }); %>
+
+          </div>
+          <!-- #endregion Products -->
+
+          
+        </div>
+                   
+      </div>
+    </main> 
+
+        <!-- #region Footer-->
+        <%- include('layouts/footer') %>
+          <!-- #endregion Footer -->
+  </div>
+  <script src="/js/cart.js"></script>
+  <script src="/js/searchWithAJAXHandling.js"></script>
+  <script src="/layouts/search"></script>
+</body>
+
+</html>

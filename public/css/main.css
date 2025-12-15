@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.nav-link {
+    @apply mt-3 text-gray-600 hover:underline sm:mx-3 sm:mt-0;
+}
+
+.star {
+    position: relative;
+
+    display: inline-block;
+    width: 0;
+    height: 0;
+
+    margin-left: .6em;
+    margin-right: .6em;
+    margin-bottom: 1.2em;
+
+    border-right: .3em solid transparent;
+    border-bottom: .7em solid #FC0;
+    border-left: .3em solid transparent;
+    /* Controlls the size of the stars. */
+    font-size: 12px;
+}
+
+.star:before,
+.star:after {
+    content: '';
+
+    display: block;
+    width: 0;
+    height: 0;
+
+    position: absolute;
+    top: .6em;
+    left: -1em;
+
+    border-right: 1em solid transparent;
+    border-bottom: .7em solid #FC0;
+    border-left: 1em solid transparent;
+
+    transform: rotate(-35deg);
+}
+
+.star:after {
+    transform: rotate(35deg);
+}
+
+.shadow-customX {
+    --tw-shadow: 6px 0px 4px rgba(0, 0, 0, 0.25);
+    --tw-shadow-colored: 6px 0px 4px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+  
+.shadow-customY {
+    --tw-shadow: 0 6px 4px rgba(0, 0, 0, 0.25);
+    --tw-shadow-colored: 0 6px 4px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.font-lalezar {
+    font-family: Lalezar, system-ui, sans-serif;
+}
+  
+.font-roboto-condensed {
+    font-family: "Roboto Condensed", sans-serif;
+}
+
+.ml-75p {
+    margin-left: 75%;
+}
+
+.bg-burger {
+    background-image: url('/images/Burger.jpg');
+}
+  
+.bg-content {
+    background-image: url('/images/fini.jpg');
+}
+
+@keyframes modalFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-140px);
+    }
+  
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+}
+  
+.animate-modalFadeIn {
+    animation: modalFadeIn 0.5s ease;
+}

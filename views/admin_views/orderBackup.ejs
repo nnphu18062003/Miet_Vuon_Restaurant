@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth font-sans">
+
+<head>
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miet Vuon Restaurant Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/admin/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+        integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div id="main" class="relative">
+        <!-- #region Header -->
+        <%- include('admin_layouts/admin_mainLayout', { content: locals.body }) %>
+            <!-- #endregion Header -->
+            <div class="z-0 p-4 pt-[200px]">
+                <!-- Search & Filter Section -->
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <!-- Search -->
+                        <form class="relative" id="searchForm" action="/admin/orders/search" method="GET">
+                            <input type="text" name="keyword" placeholder="Tìm kiếm mã đơn hàng..." class="w-full pl-12 pr-4 py-3 
+                                          border-2 border-[#81C784] 
+                                          rounded-lg 
+                                          focus:outline-none 
+                                          focus:ring-2 
+                                          focus:ring-[#66BB6A]/50
+                                          placeholder:text-gray-400">
+                            <button type="submit" class="absolute left-3 top-1/2 -translate-y-1/2
+                                           text-[#81C784] 
+                                           hover:text-[#66BB6A] 
+                                           transition-colors 
+                                           duration-200 
+                                           focus:outline-none">
+                                <i class="fa-solid fa-magnifying-glass text-xl"></i>
+                            </button>
+                        </form>
+
+                        <!-- Filter Form -->
+                        <form id="filterForm" class="col-span-3 grid grid-cols-3 gap-4">
+                            <!-- Order Status -->
+                            <select name="status" filter-status
+                                class="w-full p-2 border-2 border-gray-200 rounded-lg focus:border-[#81C784] focus:ring-2 focus:ring-[#66BB6A]/50">
+                                <option selected disabled value="">Tình trạng đơn hàng</option>
+                                <option value="Pending">Chờ xác nhận</option>
+                                <option value="Processing">Đang xử lý</option>
+                                <option value="Delivered">Đã giao cho ĐVVC</option>
+                                <option value="In_Transit">Đang vận chuyển</option>
+                                <option value="Completed">Hoàn thành</option>
+                                <option value="Canceled">Đã hủy</option>
+                            </select>
+
+                            <!-- Payment Status -->
+                            <select name="payment_status" filter-payment
+                                class="w-full p-2 border-2 border-gray-200 rounded-lg focus:border-[#81C784] focus:ring-2 focus:ring-[#66BB6A]/50">
+                                <option selected disabled value="">Trạng thái thanh toán</option>
+                                <option value="Unpaid">Chưa thanh toán</option>
+                                <option value="Paid">Đã thanh toán</option>
+                            </select>
+
+                            <!-- Filter Buttons -->
+                            <div class="flex gap-2">
+                                <button type="submit" filter-button
+                                    class="flex-1 px-4 py-2 bg-[#81C784] text-white rounded-lg hover:bg-[#66BB6A] transition-colors">
+                                    <i class="fas fa-filter mr-2"></i>Lọc
+                                </button>
+                                <button type="reset" select-all
+                                    class="flex-1 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+                                    <i class="fas fa-redo mr-2"></i>Tất cả
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Orders Table -->
+                <div class="bg-white rounded-lg shadow-lg overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mã đơn hàng
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thời gian
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Khách hàng
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tổng tiền
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tình trạng
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thanh toán
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thao tác
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <% orders.forEach(order=> { %>
+                                <tr class="hover:bg-gray-50">
+                                    <td order-id="<%= order.order_id %>" class="px-6 py-4 text-sm">#<%= order.order_code
+                                            %>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm">
+                                        <%= new Date(order.created_at).toLocaleString('vi-VN', { day: '2-digit' ,
+                                            month: '2-digit' , year: 'numeric' , hour: '2-digit' , minute: '2-digit' ,
+                                            second: '2-digit' , hour12: false }) %>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm" data-email="<%= order.email %>"
+                                        data-phone="<%= order.phone %>" data-address="<%= order.address %>">
+                                        <%= order.name %>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm">
+                                        <%= order.total %>đ
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 text-xs rounded-full 
+                                        <%= order.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                           order.status === 'Confirmed' ? 'bg-blue-100 text-blue-800' :
+                                           order.status === 'Delivered' ? 'bg-green-100 text-green-800' :
+                                             order.status === 'In Transit' ? 'bg-purple-100 text-purple-800' :
+                                               order.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                                           order.status === 'Canceled' ? 'bg-red-100 text-red-800' : '' %>">
+                                            <%= order.status %>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 text-xs rounded-full 
+                                        <%= order.status_payment === 'Paid' ? 'bg-green-100 text-green-800' :
+                                           order.status_payment === 'Unpaid' ? 'bg-red-100 text-red-800' :
+                                           'bg-yellow-100 text-yellow-800' %>">
+                                            <%= order.status_payment %>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 space-x-2">
+                                        <button view-detail order-id="<%= order.order_id %>"
+                                            class="text-blue-600 hover:text-blue-800" title="Xem chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button update-detail order-id="<%= order.order_id %>"
+                                            class="text-green-600 hover:text-green-800" title="Cập nhật">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-yellow-600 hover:text-yellow-800" title="In hóa đơn">
+                                            <i class="fas fa-print"></i>
+                                        </button>
+                                        <button cancel-detail class="text-red-600 hover:text-red-800" title="Hủy đơn">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+    </div>
+    <!-- MODAL xem chi tiết order -->
+
+    <!-- Order Details Modal -->
+    <div id="orderDetailsModal"
+        class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4 overflow-y-auto">
+        <div
+            class="bg-white rounded-xl shadow-xl max-w-2xl w-full my-8 transform transition-all duration-300 scale-95 opacity-0">
+            <!-- Header - Fixed -->
+            <div class="flex items-center justify-between p-6 border-b sticky top-0 bg-white z-10">
+                <h2 class="text-2xl font-bold text-gray-800">
+                    Chi tiết đơn hàng #<span id="orderIdDetail" class="text-[#81C784]"></span>
+                </h2>
+                <button id="closeOrderDetails" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                    <i class="fas fa-times text-gray-400 hover:text-gray-600"></i>
+                </button>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div class="p-6 space-y-6 max-h-[calc(100vh-16rem)] overflow-y-auto">
+                <!-- Order Status -->
+                <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg sticky top-0">
+                    <span class="font-medium text-gray-700">Trạng thái đơn hàng</span>
+                    <span id="orderStatus" class="px-3 py-1 rounded-full text-sm"></span>
+                </div>
+
+                <!-- Customer Info -->
+                <div class="bg-gray-50 p-4 rounded-lg space-y-3">
+                    <h3 class="font-semibold text-gray-700 mb-2">Thông tin khách hàng</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <p class="text-sm">
+                            <span class="text-gray-500">Tên:</span>
+                            <span id="customerName" class="ml-2 font-medium"></span>
+                        </p>
+                        <p class="text-sm">
+                            <span class="text-gray-500">Email:</span>
+                            <span id="customerEmail" class="ml-2 font-medium"></span>
+                        </p>
+                        <p class="text-sm col-span-2">
+                            <span class="text-gray-500">Địa chỉ:</span>
+                            <span id="customerAddress" class="ml-2 font-medium"></span>
+                        </p>
+                        <p class="text-sm col-span-2">
+                            <span class="text-gray-500">Số điện thoại:</span>
+                            <span id="customerPhone" class="ml-2 font-medium"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Order Items - Scrollable Area -->
+                <div class="space-y-3">
+                    <h3 class="font-semibold text-gray-700">Chi tiết món</h3>
+                    <div id="orderItems" class="divide-y divide-gray-200 max-h-[40vh] overflow-y-auto rounded-lg">
+                        <!-- Items will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Payment Info - Fixed Bottom -->
+                <div class="bg-gray-50 p-4 rounded-lg space-y-3 sticky bottom-0">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-500">Tạm tính:</span>
+                        <span id="subtotal"></span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-500">Phí giao hàng:</span>
+                        <span id="deliveryFee"></span>
+                    </div>
+                    <div class="flex justify-between items-center font-bold text-lg pt-2 border-t">
+                        <span>Tổng cộng:</span>
+                        <span id="orderTotal" class="text-[#81C784]"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed top-4 right-4 z-50"></div>
+    <!-- Add Update Order Modal -->
+    <div id="updateOrderModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 w-[500px] transform transition-all duration-300 scale-95 opacity-0">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-6 border-b pb-3">
+                <h3 class="text-xl font-bold">Cập nhật đơn hàng #<span id="updateOrderId"></span></h3>
+                <button id="closeUpdateModal" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Form -->
+            <form id="updateOrderForm" class="space-y-6">
+                <input type="hidden" id="updateOrderIdInput">
+
+                <!-- Order Status -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái đơn hàng</label>
+                    <select id="orderStatusSelect"
+                        class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-[#81C784] focus:border-[#81C784]">
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="In_transit">In Transit</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Canceled">Canceled</option>
+                    </select>
+                </div>
+
+                <!-- Payment Status -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái thanh toán</label>
+                    <select id="paymentStatusSelect"
+                        class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-[#81C784] focus:border-[#81C784]">
+                        <option value="Unpaid">Unpaid</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Pending">Pending Payment</option>
+                    </select>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex justify-end space-x-3 pt-4 border-t">
+                    <button type="button" id="cancelUpdate"
+                        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
+                        Hủy
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-[#81C784] text-white rounded-lg hover:bg-[#66BB6A]">
+                        Cập nhật
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Add before closing body tag -->
+
+    <!-- Delete Order Confirmation Modal -->
+    <div id="deleteOrderModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 w-[400px] transform transition-all duration-300 scale-95 opacity-0">
+            <!-- Header -->
+            <div class="text-center mb-6">
+                <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+                <h3 class="text-xl font-bold">Xác nhận hủy đơn hàng</h3>
+                <p class="text-gray-500 mt-2">Bạn có chắc chắn muốn hủy đơn hàng #<span id="deleteOrderId"></span>?</p>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex justify-end space-x-3">
+                <button id="cancelDelete"
+                    class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">
+                    Không
+                </button>
+                <button id="confirmDelete"
+                    class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                    Có, hủy đơn
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="/admin/js/orders.js"></script>
+</body>

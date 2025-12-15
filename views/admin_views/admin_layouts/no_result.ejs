@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth font-sans">
+<head>
+    <link id="favicon" rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon"> 
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="referrer" content="always" />
+    <meta name="description" content="TailwindCSS Ecommerce Template" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="/css/main.css" rel="stylesheet">
+</head>
+
+<body>
+    <div>
+        <!-- #region Header -->
+        <%- include('admin_header') %>
+        <!-- #endregion Header -->
+
+        <!-- #region Sidebar -->
+        <%- include('admin_sidebar') %>
+        <!-- #endregion Sidebar -->
+         <!-- No Results Content -->
+        <div class="flex flex-col items-center justify-center min-h-[70vh] px-4">
+            <!-- Icon -->
+            <div class="text-[#81C784] mb-6">
+                <i class="fa-solid fa-search text-8xl"></i>
+            </div>
+
+            <!-- Message -->
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                Không tìm thấy kết quả
+            </h2>
+            <p class="text-gray-600 mb-8 text-center max-w-md">
+                Không tìm thấy sản phẩm nào phù hợp với từ khóa "<%= keyword %>"
+            </p>
+
+            <!-- Back Button -->
+            <a href="/admin/products" 
+               class="px-6 py-3 bg-[#81C784] text-white rounded-lg 
+                      hover:bg-[#66BB6A] transition-colors duration-200
+                      flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i>
+                Quay lại danh sách sản phẩm
+            </a>
+        </div>
+
+
+    </div>
+
+    <script>
+        // Lấy các phần tử liên quan
+        const checkBox = document.getElementById('check');
+        const btn = document.getElementById('btn');
+        const cancel = document.getElementById('cancel');
+        const sidebarMenu = document.getElementById('sidebar-menu');
+
+        // Hàm khi checkbox được checked
+        function toggleSidebar() {
+            // Kiểm tra xem checkbox có đang checked hay không
+            if (checkBox.checked) {
+                // Nếu checked, mở sidebar và hiển thị icon xmark
+                sidebarMenu.style.left = '0px';
+                cancel.style.left = '215px'; // Di chuyển icon xmark
+                btn.style.left = '250px';
+                btn.style.opacity = '0';  // Ẩn icon bars
+                btn.style.pointerEvents = 'none';  // Tắt sự kiện của btn khi sidebar mở
+            } else {
+                // Nếu không checked, đóng sidebar và hiển thị lại icon bars
+                sidebarMenu.style.left = '-250px';
+                cancel.style.left = '-215px'; // Di chuyển icon xmark ra ngoài
+                btn.style.left = '40px';
+                btn.style.opacity = '1';  // Hiển thị lại icon bars
+                btn.style.pointerEvents = 'auto';  // Bật sự kiện của btn khi sidebar đóng
+            }
+        }
+
+        // Thêm sự kiện thay đổi cho checkbox
+        checkBox.addEventListener('change', toggleSidebar);
+
+        //Đổi màu thẻ li trong sidebar
+        document.addEventListener("DOMContentLoaded", function () {
+            const links = document.querySelectorAll(".nav-link");
+            const currentPath = window.location.pathname; // Lấy URL hiện tại
+
+            // Đặt class cho link tương ứng với URL hiện tại
+            links.forEach(link => {
+                if (link.getAttribute("href") === currentPath) {
+                    link.classList.add("bg-black", "text-white");
+                } else {
+                    link.classList.remove("bg-black", "text-white");
+                    link.classList.add("text-black");
+                }
+
+                // Thêm sự kiện click để thay đổi class khi nhấp
+                link.addEventListener("click", function() {
+                    links.forEach(l => l.classList.remove("bg-black", "text-white"));
+                    this.classList.add("bg-black", "text-white");
+                });
+            });
+        });
+
+    </script>
+</body>
+</html>

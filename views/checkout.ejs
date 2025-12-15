@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="//fonts.googleapis.com/css?family=Righteous" rel="stylesheet" />
+  <link href="//fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300i,700" rel="stylesheet" />
+  <link href="//fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/all.min.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link id="favicon" rel="icon" type="image/png" href="/images/favicon.png">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../dist/main.css" />
+</head>
+<body class="bg-gray-50">
+  <!-- #region Header -->
+  <%- include('layouts/header') %>
+  
+  
+  <!-- Container -->
+  <div class="max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-8 mb-12 md:mt-12 flex flex-col md:gap-10">
+  
+    <!-- Main Form and Summary -->
+    <form class="flex flex-col lg:flex-row gap-6 lg:gap-10" method="post" action="/checkout/create">
+      <!-- Billing Details -->
+      <div class="flex-grow">
+        <h2 class="text-xl md:text-2xl font-medium mb-4 md:mb-6">Thông tin đặt hàng</h2>
+        <div class="flex flex-col gap-4">
+         
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Họ và tên</label>
+                <input type="text" name="name" value="<%= userProfile.name %>" 
+                        class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" name="email" value="<%= userProfile.email %>" 
+                        class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
+            </div>
+      
+        
+            <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700">Số điện thoại</label>
+                <input type="text" name="phonenumber" value="<%= userProfile.phone %>" 
+                        class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+            </div>
+            <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700">Địa chỉ</label>
+                <input type="text" name="address_line" value="<%= userProfile.address_line %>" 
+                        class="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+            </div>
+          
+        </div>
+      </div>
+
+      <!-- Cart Summary -->
+      <div class="w-full lg:w-1/2 bg-white p-6 shadow rounded-md max-w-md">
+        <h2 class="text-lg md:text-xl font-medium mb-4 md:mb-6">Đơn hàng</h2>
+        <div class="flex flex-col gap-4">
+          <div class="col-span-2 rounded-xl overflow-hidden">
+            <table class="w-full text-gray-700 shadow-md bg-blue-950">
+                <tbody>
+                    <!-- Lặp qua các sản phẩm trong bảng -->
+                    <% products.forEach(product => { %>
+                    <tr class="border-b bg-white">
+                        
+                        <td><img class="ml-4  max-w-xs w-10 rounded-md" src="<%= product.product_url %>" alt="Product image" /></td>
+                        <td class="py-3 px-3 text-left"><%= product.name %></td>
+                        <td class="py-3 px-2 text-left">
+                            <div class="flex items-center">
+                                <button class="text-gray-700 hover:text-gray-900 p-2">
+                                    <i class="gg-math-minus"></i>
+                                </button>
+                                <input class="mx-1 w-8 text-center" type="number" value="<%= product.quantity %>">
+                                <button class="text-gray-700 hover:text-gray-900 p-2">
+                                    <i class="gg-math-plus"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td class="py-4 px-6 text-right"><%= product.discountprice %> VNĐ</td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+          <!-- <div class="flex justify-between">
+            <span>Shipping:</span>
+            <span>Free</span>
+          </div> -->
+          <div class=" shadow-md py-3 rounded-xl flex h-62 flex-col bg-gray-200">
+            <table class="w-full text-gray-700">
+                <tbody>
+                    <tr class="border-b border-gray-400">
+                        <td class="py-4 px-6 text-left font-medium">Total</td>
+                        <td class="py-4 px-6 text-right"><%= totalSum %> VNĐ</td>
+                    </tr>
+                    <tr class="border-b border-gray-400">
+                        <td class="py-4 px-6 text-left font-medium">Discount</td>
+                        <td class="py-4 px-6 text-right">-<%= totalDiscount %></td>
+                    </tr>
+                    <tr class="border-b border-gray-400">
+                      <td class="py-4 px-6 text-left font-medium">Shipping </td>
+                      <td class="py-4 px-6 text-right">Free VNĐ</td>
+                    </tr>
+                    <tr class="">
+                        <td class="py-4 px-6 text-left font-medium">Final Amount</td>
+                        <td class="py-4 px-6 text-right"><%= totalPay %> VNĐ</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+          <input type="hidden" name="products" value='<%= JSON.stringify(products) %>'>
+          <input type="hidden" name="totalPay" value="<%= totalPay %>">
+          <div class="mt-4 mx-2">
+            <label class="flex items-center gap-2">
+              <label class="block text-xl font-medium text-gray-500">Phương thức thanh toán: Bank</label>
+            </label>
+          </div>
+          <button type="submit" class="bg-red-500 text-white rounded-md px-6 py-2 mt-4 w-full">Order</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <!-- #region Footer-->
+  <%- include('layouts/footer') %>
+  <!-- #endregion Footer -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</body>
+</html>

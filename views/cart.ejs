@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title><%= title %></title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta name="referrer" content="always" />
+  <meta name="description" content="TailwindCSS Ecommerce Template" />
+  <link href="//fonts.googleapis.com/css?family=Righteous" rel="stylesheet" />
+  <link href="//fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300i,700" rel="stylesheet" />
+  <link href="//fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/all.min.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link id="favicon" rel="icon" type="image/png" href="/images/favicon.png">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div>
+
+    <!-- #region Header -->
+    <%- include('layouts/mainLayout', { content: locals.body }) %>
+    <!-- #endregion Header -->
+     <div class="flex flex-col min-h-screen">
+        <main class="my-8">
+            <div class="container mx-auto grid md:grid-cols-3 gap-6">
+                <% if (products.length === 0) { %>
+                    <div class="col-span-2 rounded-xl overflow-hidden ">
+                        <table class="w-full text-gray-700 h-60">
+                            <tr>
+                                <td colspan="6" class="text-center py-8 col-span-2 rounded-xl overflow-hidden">
+                                    <p class="text-gray-300 text-lg mb-4">Giỏ hàng trống.</p>
+                                    <a href="/" class="bg-[#43A047] text-white rounded-md px-6 py-2">Quay về trang chủ</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                <% } else { %>
+               
+                    <div class="col-span-2 rounded-xl overflow-hidden" id="cart-table">
+                        <table class="w-full text-gray-700 shadow-md bg-[#43A047]" >
+                            <thead>
+                                <tr class="border-b">
+                                    
+                                    <th class="py-4 px-6 text-white text-left font-medium uppercase">Sản phẩm</th>
+                                    <th class="py-4 px-6 text-white text-left font-medium uppercase">Tên</th>
+                                    <th class="py-4 px-6 text-white text-left font-medium uppercase">Số lượng</th>
+                                    <th class="py-4 px-6 text-white text-right font-medium uppercase">Giá</th>
+                                    <th class="py-4 px-6 text-white text-right font-medium uppercase">Giá sau giảm</th>
+                                    <th class="py-4 px-6 text-white text-right font-medium uppercase">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cart-list">
+                                <!-- Lặp qua các sản phẩm trong bảng -->
+                                    <% products.forEach(product => { %>
+                                    <tr class="border-b bg-white ">
+                                        
+                                        <td><img class="ml-8 max-w-xs w-12 rounded-md" src="<%= product.product_url %>" alt="Product image" /></td>
+                                        <td class="py-4 px-6 text-left"><%= product.name %></td>
+                                        <td class="py-4 px-6 text-left">
+                                            <div class="flex items-center">
+                                                <button class="text-gray-700 hover:text-gray-900 p-2">
+                                                    <i class="gg-math-minus"></i>
+                                                </button>
+                                                <input id="quantity-modifier" class="mx-2 w-8 text-center" type="number" value="<%= product.quantity %>" min="1">
+                                                <button class="text-gray-700 hover:text-gray-900 p-2">
+                                                    <i class="gg-math-plus"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 px-6 text-right"><%= product.price %> VNĐ</td>
+                                        <td class="py-4 px-6 text-right"><%= product.discountprice %> VNĐ</td>
+                                        <td class="py-4 px-6 text-center">
+                                            <button class="text-red-600 hover:text-red-800 delete-btn" product-id="<%= product.product_id %>">
+                                                Xoá
+                                            </button>
+                                        </td>
+                                        
+                                    </tr>
+                                    <% }); %>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                    <% } %>
+                <!-- Summary Section (New column on the right) -->
+                <div class="bg-white shadow-md p-8 rounded-xl flex h-72  col-span-1 flex-col">
+                    <table class="w-full text-gray-700">
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="py-4 px-6 text-left font-medium">Tổng tiền</td>
+                                <td id="total-sum" class="py-4 px-6 text-right"><%= totalSum %> VNĐ</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-4 px-6 text-left font-medium">Giảm giá</td>
+                                <td id="total-discount" class="py-4 px-6 text-right">- <%= totalDiscount %> VNĐ</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-4 px-6 text-left font-medium">Tổng thanh toán</td>
+                                <td id="total-pay" class="py-4 px-6 text-right"><%= totalPay %> VNĐ</td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                    <td class="mb-8">  
+                        <button id="place-order" class="bg-[#DEAA79]  text-white rounded-md px-6 py-2 mt-4 w-full">Đặt món</button>
+                    </td>
+                </div>
+            </div>
+        </main>
+        </div>
+        <!-- #region Footer-->
+        <%- include('layouts/footer') %>
+        <!-- #endregion Footer -->
+        <input type="hidden" id="user-id" value="<%= user_id %>">
+    </div>
+    <script src="/js/moveToCheckoutBtn.js"></script>
+
+    <script src="/js/handlingProductInCart.js"></script>
+</body>
+
+</html>

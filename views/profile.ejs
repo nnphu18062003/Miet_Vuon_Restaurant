@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="referrer" content="always" />
+    <meta name="description" content="TailwindCSS Ecommerce Template" />
+    <link href="//fonts.googleapis.com/css?family=Righteous" rel="stylesheet" />
+    <link href="//fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300i,700" rel="stylesheet" />
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/all.min.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link id="favicon" rel="icon" type="image/png" href="/images/favicon.png" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/tailwind.css" />
+    <script src="js/profile.js" defer></script>
+</head>
+
+<body class="bg-gray-100 font-sans">
+    <%- include('layouts/mainLayout', { content: locals.body }) %>
+
+    <div class="container mx-auto my-10">
+        <div class="flex">
+            <!-- Sidebar -->
+            <div class="w-1/4 bg-white shadow-lg p-5 rounded-md">
+                <h2 class="text-lg font-semibold mb-4">Tài Khoản Của Tôi</h2>
+                <ul class="space-y-2">
+                    <li>
+                        <button id="profile-tab" onclick="showSection('profile')" 
+                                class="block w-full py-2 px-4 rounded-md bg-blue-500 text-white hover:bg-blue-600">
+                            Hồ Sơ
+                        </button>
+                    </li>
+                    <li>
+                        <button id="address-tab" onclick="showSection('address')" 
+                                class="block w-full py-2 px-4 rounded-md text-gray-700 hover:bg-gray-200">
+                            Địa Chỉ
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="w-3/4 ml-5">
+                <!-- Profile Section -->
+                <div id="profile-content" class="bg-white p-5 shadow-lg rounded-md">
+                    <h2 class="text-lg font-semibold mb-4">Hồ Sơ Của Tôi</h2>
+                    <form action="account/profile/update" method="POST">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Họ và tên</label>
+                                <input type="text" name="name" value="<%= userProfile.name %>" 
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Email</label>
+                                <input type="email" name="email" value="<%= userProfile.email %>" 
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-gray-700">Số điện thoại</label>
+                                <input type="text" name="phonenumber" value="<%= userProfile.phone%>" 
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-gray-700">Địa chỉ</label>
+                                <input type="text" name="address_line" value="<%= userProfile.address_line %>" 
+                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                        </div>
+                        <div class="mt-5">
+                            <button type="submit" class="text-white bg-blue-500 px-5 py-3 rounded-md hover:bg-blue-600">Lưu Thay Đổi</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Address Section -->
+                <div id="address-content" class="hidden">
+                  
+                    <div id="address-list" class="bg-white p-5 shadow-lg rounded-md">
+                        <h2 class="text-lg font-semibold mb-4">Địa chỉ của tôi</h2>
+
+                        <div class="space-y-4">
+                            <!-- Lặp qua danh sách địa chỉ -->
+                            <% addresses.forEach(function(address) { %>
+                                <div class="border rounded-md p-6 flex justify-between items-center">
+                                    <!-- Thông tin địa chỉ -->
+                                    <div>
+                                        <div class="mb-2">
+                                            <p class="font-semibold">
+                                                <%= address.name %> <span class="text-sm text-gray-500"><%= address.phone%></span>
+                                            </p>
+                                            <p><%= address.address_line %></p>
+                                        </div>
+                                        
+                                        <% if (address.isdefault) { %>
+                                            <span class="text-red-500 font-semibold px-2 py-1 border border-red-500 rounded-md">Mặc định</span>
+                                        <% } %>
+                                    </div>
+                                    <!-- Nút chức năng -->
+                                    <div class="flex space-x-2">
+                                        <% if (address.isdefault) { %>
+                                            <button onclick="showUpdateAddressForm('<%= address.address_id %>', '<%= address.address_line %>')" class="text-white bg-yellow-500 px-4 py-2 rounded-md hover:bg-yellow-600">
+                                                Cập nhật
+                                            </button>
+                                        <% } else { %>
+                                            <button onclick="showUpdateAddressForm('<%= address.address_id %>', '<%= address.name %>', '<%= address.address_line %>')" class="text-white bg-yellow-500 px-4 py-2 rounded-md hover:bg-yellow-600">
+                                                Cập nhật
+                                            </button>
+                                            <button onclick="deleteAddress('<%= address.address_id %>')" class="text-white bg-red-500 px-4 py-2 rounded-md hover:bg-red-600">Xóa</button>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            <% }); %>
+                            
+                            
+                            
+                        </div>
+
+                        <div class="mt-5">
+                            <button onclick="showAddAddressForm()" class="text-white bg-orange-500 px-5 py-3 rounded-md hover:bg-orange-600">+ Thêm địa chỉ mới</button>
+                        </div>
+                    </div>
+                
+
+                    <!-- Add Address Form -->
+                    <div id="add-address-form" class="bg-white p-5 shadow-lg rounded-md hidden">
+                        <h2 class="text-lg font-semibold mb-4">Địa chỉ mới</h2>
+                        <form method="POST" action="/account/address/create">
+                            
+                                
+                          
+                  
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-gray-700">Địa chỉ cụ thể</label>
+                                <input type="text" name="address_line" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
+                            </div>
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-gray-700">Loại địa chỉ:</label>
+                                <div class="flex items-center space-x-4">
+                                    <label class="flex items-center">
+                                        <input type="radio" name="addressType" value="home" class="form-radio text-blue-500" checked>
+                                        <span class="ml-2">Nhà Riêng</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="addressType" value="office" class="form-radio text-blue-500">
+                                        <span class="ml-2">Văn Phòng</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center">
+                                <input type="checkbox" name="setAsDefault" class="form-checkbox text-blue-500">
+                                <span class="ml-2">Đặt làm địa chỉ mặc định</span>
+                            </div>
+                            <div class="mt-5 flex space-x-4">
+                                <button type="button" onclick="hideAddAddressForm()" class="text-gray-700 bg-gray-200 px-5 py-3 rounded-md hover:bg-gray-300">Trở Lại</button>
+                                <button type="submit" class="text-white bg-orange-500 px-5 py-3 rounded-md hover:bg-orange-600">Hoàn thành</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="update-address-form" class="bg-white p-5 shadow-lg rounded-md hidden">
+                        <h2 class="text-lg font-semibold mb-4">Cập nhập địa chỉ</h2>
+                        <form method="POST" action="/account/address/update">
+                            <input type="hidden" name="address_id" value="">
+                       
+                            
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-gray-700">Địa chỉ cụ thể</label>
+                                <input type="text" name="address_line" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" required>
+                            </div>
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-gray-700">Loại địa chỉ:</label>
+                                <div class="flex items-center space-x-4">
+                                    <label class="flex items-center">
+                                        <input type="radio" name="addressType" value="home" class="form-radio text-blue-500" checked>
+                                        <span class="ml-2">Nhà Riêng</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="addressType" value="office" class="form-radio text-blue-500">
+                                        <span class="ml-2">Văn Phòng</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center">
+                                <input type="checkbox" name="setAsDefault" class="form-checkbox text-blue-500">
+                                <span class="ml-2">Đặt làm địa chỉ mặc định</span>
+                            </div>
+                            <div class="mt-5 flex space-x-4">
+                                <button type="button" onclick="hideAddAddressForm()" class="text-gray-700 bg-gray-200 px-5 py-3 rounded-md hover:bg-gray-300">Trở Lại</button>
+                                <button type="submit" class="text-white bg-orange-500 px-5 py-3 rounded-md hover:bg-orange-600">Hoàn thành</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('layouts/footer') %>
+    <!-- #endregion Footer -->
+    <script src="/js/cart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/js/filterHandlingAndPaginationAJAX.js"></script>
+    <Script src="/js/searchWithAJAXHandling.js"></Script>
+    <script src="/layouts/search"></script>
+    <script src="/js/profile.js"></script>
+</body>
+
+</html>

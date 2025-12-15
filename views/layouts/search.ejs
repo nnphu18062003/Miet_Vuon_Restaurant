@@ -1,0 +1,23 @@
+<div class="mt-6 pt-2 pb-7 px-4 hidden md:block">
+    <div id="search-form" class="relative max-w-2xl mx-auto col-span-4 flex items-center">
+      <!-- Icon tìm kiếm -->
+      <span class="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
+        <i class="gg-search"></i>
+      </span>
+  
+      <!-- Form tìm kiếm -->
+      <form id="search-form" class="flex w-full" onsubmit="event.preventDefault(); updateQueryAndSearchProductListWithAJAX();">
+        <!-- Ô nhập -->
+        <input id="search-input"
+          class="bg-white h-10 rounded-l-xl pl-10 block w-full border border-gray-500 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+          type="text" name="search" placeholder="Tìm kiếm sản phẩm..." required />
+        
+        <!-- Nút Search -->
+        <button type="submit"
+          class="bg-[#441d0c] h-10 px-6 text-white font-semibold rounded-r-xl hover:bg-[#6b331a] focus:outline-none focus:ring-2 focus:ring-blue-300">
+          Search
+        </button>
+      </form>
+    </div>
+  </div>
+  

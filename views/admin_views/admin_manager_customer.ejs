@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth font-sans">
+
+<head>
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miet Vuon Restaurant Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+        integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div id="main" class="relative ">
+        <!-- Background -->
+        
+        <!-- #region Header -->
+        <%- include('admin_layouts/admin_mainLayout', { content: locals.body }) %>
+            <!-- #endregion Header -->
+            <div class="z-0 p-4 pt-[150px]">
+                <!-- Customer Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+                    <% customers.forEach(customer=> { %>
+                        <div
+                            class="bg-yellow-200 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                            <div class="p-6 relative">
+
+                                <!-- Customer Info -->
+                                <div class="text-center">
+                                    <div
+                                        class="w-20 h-20 mx-auto bg-gray-200 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user text-3xl text-gray-400"></i>
+                                    </div>
+                                    <h3 class="mt-4 text-xl font-semibold text-gray-800">
+                                        <%= customer.name %>
+                                    </h3>
+                                    <p class="text-gray-800">
+                                        <%= customer.email %>
+                                    </p>
+                                </div>
+
+                                <!-- View Detail Button -->
+                                <div class=" bg-yellow-200 customer-card rounded-lg shadow-lg" data-id="<%= customer.id %>">
+                                    <button
+                                        class="js-view-detail mt-6 w-full py-2 bg-[#66BB6A] text-white rounded-lg hover:bg-[#2E7D32] transition-colors"
+                                        data-id="<%= customer.id %>">
+                                        Xem chi tiết
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                        <% }); %>
+                </div>
+
+            </div>
+
+    </div>
+    <script>
+        // View Detail
+        document.querySelectorAll('.js-view-detail').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const customerId = btn.closest('.customer-card').getAttribute('data-id');
+                window.location.href = `/admin/customer/${customerId}/detail`;
+            });
+        });
+        
+    </script>
+</body>

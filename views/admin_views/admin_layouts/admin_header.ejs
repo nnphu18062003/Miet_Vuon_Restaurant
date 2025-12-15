@@ -1,0 +1,120 @@
+<div id="header"
+    class="z-[2] h-[65px] w-full fixed flex items-center bg-[#66BB6A] px-[20px] py-[10px] text-white shadow-customY overflow-hidden">
+    <div id="logo-name" class="flex items-center mr-[100px]">
+        <div style="background-image: url('/images/logo1.png')"
+            class="logo w-[60px] h-[60px] bg-cover bg-center bg-no-repeat rounded-full mr-[12px] flex-shrink-0"></div>
+        <div class="flex flex-col">
+          <div class="name text-[24px] font-lalezar uppercase leading-tight">Miet Vuon</div>
+          <div class="name text-[20px] font-lalezar uppercase leading-tight">Restaurant</div>
+        </div>
+    </div>
+
+    <div id="welcome">
+        <div class="text-welcome1 text-[22px] uppercase font-lalezar">Mừng bạn trở lại!</div>
+        <div class="text-welcome2 text-[17px] font-roboto-condensed">Cùng xem lại sơ lược ngày hôm nay của nhà hàng
+            nào!!</div>
+    </div>
+
+    <form form-search action="/admin/products/search" method="GET"
+        class="relative flex items-center w-[400px] mx-4 font-roboto-condensed">
+        <input type="text" name="keyword" id="searchInput" placeholder="Tìm kiếm món ăn..." class="w-full h-[50px] pl-12 pr-4 
+                text-[18px] 
+                text-gray-800 
+                bg-white/90 
+                border-2 border-[#81C784] 
+                rounded-[20px] 
+                focus:outline-none 
+                focus:border-[#66BB6A] 
+                focus:ring-2 
+                focus:ring-[#66BB6A]/50 
+                focus:bg-white
+                hover:bg-white
+                transition-all duration-200
+                placeholder:text-gray-500
+                placeholder:font-light">
+        <button type="submit" class="absolute left-4 
+            text-[#81C784] 
+            hover:text-[#66BB6A] 
+            transition-colors 
+            duration-200 
+            focus:outline-none">
+            <i class="fa-solid fa-magnifying-glass text-xl"></i>
+        </button>
+    </form>
+
+    <div id="notification">
+        <button class="noti-btn bg-transparent border-0 text-white text-[25px] ml-[100px] cursor-pointer">
+            <i class="fa-solid fa-bell"></i>
+        </button>
+    </div>
+
+    <div id="admin-account" class="relative ml-[50px]">
+        <!-- Admin Button -->
+        <button onclick="toggleDropdown()" class="flex items-center">
+            <div class="w-[45px] h-[45px] bg-amber-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-user text-[20px] text-amber-600"></i>
+            </div>
+            <div class="ml-3">
+                <div class="text-[16px] text-white">Admin</div>
+            </div>
+            <i id="dropdownArrow" class="fas fa-chevron-down text-amber-200 ml-2"></i>
+        </button>
+    
+        <!-- Dropdown Menu -->
+        <div id="dropdownMenu" class="hidden absolute right-0 top-[60px] w-[200px] bg-white rounded-lg shadow-lg">
+            <a href="/admin/profile" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100">
+                <i class="fas fa-user-circle text-amber-500 mr-3"></i>
+                <span>Hồ sơ</span>
+            </a>
+            <hr class="my-1">
+            <button onclick="showLogoutConfirm()" class="w-full flex items-center px-4 py-3 text-red-600 hover:bg-gray-100">
+                <i class="fas fa-sign-out-alt mr-3"></i>
+                <span>Đăng xuất</span>
+            </button>
+        </div>
+    
+        <!-- Simple Logout Modal -->
+        <div id="logoutModal" class="hidden fixed inset-0 bg-black/50 items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-6 w-[300px]">
+                <div class="text-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800">Bạn có chắc chắn muốn đăng xuất?</h3>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button onclick="closeLogoutModal()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">
+                        Hủy
+                    </button>
+                    <a href="/admin/logout" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+                        Đăng xuất
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    let isDropdownOpen = false;
+    
+    function toggleDropdown() {
+        const menu = document.getElementById('dropdownMenu');
+        const arrow = document.getElementById('dropdownArrow');
+        isDropdownOpen = !isDropdownOpen;
+        
+        menu.classList.toggle('hidden');
+        arrow.classList.toggle('rotate-180');
+    }
+    
+    function showLogoutConfirm() {
+        document.getElementById('logoutModal').classList.replace('hidden', 'flex');
+    }
+    
+    function closeLogoutModal() {
+        document.getElementById('logoutModal').classList.replace('flex', 'hidden');
+    }
+    
+    document.addEventListener('click', (e) => {
+        if (!document.getElementById('admin-account').contains(e.target) && isDropdownOpen) {
+            toggleDropdown();
+        }
+    });
+    </script>
+</div>

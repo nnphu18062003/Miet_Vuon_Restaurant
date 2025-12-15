@@ -1,0 +1,79 @@
+CREATE OR REPLACE FUNCTION update_order_total()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE orders
+    SET total = (
+        SELECT SUM(detail_orders.quantity * products.price)
+        FROM detail_orders 
+        JOIN products  ON detail_orders.product_id = products.product_id
+        WHERE detail_orders.order_id = NEW.order_id
+    )
+    WHERE orders.order_id = NEW.order_id;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trg_update_order_total
+AFTER INSERT OR UPDATE OR DELETE
+ON detail_orders
+FOR EACH ROW
+EXECUTE FUNCTION update_order_total();
+
+
+// Tự động sinh mã đơn hàng
+CREATE SEQUENCE order_code_seq START 1;
+
+CREATE OR REPLACE FUNCTION generate_order_code()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.order_code := 'DH' || LPAD(nextval('order_code_seq')::TEXT, 3, '0');
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_generate_order_code
+BEFORE INSERT ON orders
+FOR EACH ROW
+EXECUTE FUNCTION generate_order_code();
+
+
+// fix error trùng product_id:
+SELECT last_value FROM products_product_id_seq;
+SELECT MAX(product_id) FROM products;
+SELECT setval('products_product_id_seq', (SELECT MAX(product_id) FROM products));
+
+
+-- Xóa trigger cũ nếu đã tồn tại
+DROP TRIGGER IF EXISTS update_total_trigger ON detail_orders;
+DROP FUNCTION IF EXISTS calculate_order_total();
+
+-- Tạo hàm trigger mới
+CREATE OR REPLACE FUNCTION calculate_order_total()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Cập nhật total cho bảng orders
+    UPDATE orders
+    SET total = (
+        SELECT SUM(
+            CASE 
+                WHEN products.is_discount_active = true THEN products.price * (1 - products.discount/100.0) * detail_orders.quantity
+                ELSE products.price * detail_orders.quantity
+            END
+        )
+        FROM detail_orders 
+        JOIN products  ON detail_orders.product_id = products.product_id
+        WHERE detail_orders.order_id = NEW.order_id
+    )
+    WHERE order_id = NEW.order_id;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Tạo trigger mới
+CREATE TRIGGER update_total_trigger
+AFTER INSERT OR UPDATE OR DELETE ON detail_orders
+FOR EACH ROW
+EXECUTE FUNCTION calculate_order_total();
