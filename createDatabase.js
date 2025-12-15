@@ -19,8 +19,8 @@ async function createDatabase() {
 		client = new Client({
 			host: process.env.DB_HOST,
 			user: process.env.DB_USERNAME,
-			password: process.env.DB_PASSWORD,
-			port: process.env.DB_PORT,
+			password: process.env.DB_PASSWORD || "",
+			port: parseInt(process.env.DB_PORT) || 5432,
 			database: "postgres", // Connect to the default database
 		});
 	}
