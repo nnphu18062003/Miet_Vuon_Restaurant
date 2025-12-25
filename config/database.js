@@ -21,11 +21,11 @@ else
     pool = new Pool({
         host: process.env.DB_HOST,
         user: process.env.DB_USERNAME,
-        password: process.env.DB_PASSWORD || "",
+        password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
-        port: parseInt(process.env.DB_PORT) || 5432,
-        max: parseInt(process.env.DB_MAX_CLIENTS) || 10,
-        idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT_MILLIS) || 30000,
+        port: process.env.DB_PORT,
+        max: parseInt(process.env.DB_MAX_CLIENTS),
+        idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT_MILLIS),
     });
 }
 

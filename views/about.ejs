@@ -47,25 +47,6 @@
             padding: 0 1rem;
         }
 
-        .img-slider {
-            position: relative;
-            height: 500px;
-            overflow: hidden;
-            margin-bottom: 2rem; /* Thêm khoảng cách giữa slider và phần tiếp theo */
-        }
-
-        .img-slider > div {
-            display: flex;
-            transition: transform 1s ease-in-out;
-            width: 100%;
-        }
-
-        .img-slider img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-        }
 
         .card {
             background-color: #fff;
@@ -121,15 +102,21 @@
     <%- include('layouts/mainLayout', { content: locals.body }) %>
 
     <!-- About Section -->
+    <!-- Hình của trang chủ -->
+    <div class="relative flex items-center justify-center overflow-hidden w-full" style="height: 700px;">
+        <div id="imageSlider" class="flex transition-transform duration-500 ease-in-out" style="width: 100%; height: 100%;">
+            <img src="/images/homepage1.png" alt="Homepage 1" class="flex-shrink-0 w-full h-full object-cover">
+            <img src="/images/homepage2.png" alt="Homepage 2" class="flex-shrink-0 w-full h-full object-cover">
+            <img src="/images/homepage3.png" alt="Homepage 3" class="flex-shrink-0 w-full h-full object-cover">
+            <img src="/images/homepage4.png" alt="Homepage 4" class="flex-shrink-0 w-full h-full object-cover">
+            <img src="/images/homepage5.png" alt="Homepage 5" class="flex-shrink-0 w-full h-full object-cover">
+        </div>
+        <!-- Nút chuyển ảnh -->
+        <button id="prev" class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-gray-600/80 hover:bg-gray-700 text-white px-4 py-2 rounded-full text-2xl font-bold transition-colors z-10">‹</button>
+        <button id="next" class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-gray-600/80 hover:bg-gray-700 text-white px-4 py-2 rounded-full text-2xl font-bold transition-colors z-10">›</button>
+    </div>
+
     <main class="container mx-auto px-4 py-8">
-        <!-- Image Slider Section -->
-        <section class="img-slider mb-8">
-            <div>
-                <img src="/images/homepage1.png" alt="Image 1">
-                <img src="/images/homepage2.png" alt="Image 2">
-                <img src="/images/homepage3.png" alt="Image 3">
-            </div>
-        </section>
 
         <section class="content-center">
             <h2 class="section-title">Về Chúng Tôi</h2>
@@ -196,19 +183,73 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="/js/filterHandlingAndPaginationAJAX.js"></script>
 
-    <!-- JavaScript for Automatic Image Slider -->
+    <!-- Di chuyển ảnh -->
     <script>
-        let currentIndex = 0;
-        const images = document.querySelectorAll('.img-slider img');
-        const totalImages = images.length;
-
-        function showNextImage() {
-            const sliderDiv = document.querySelector('.img-slider > div');
-            currentIndex = (currentIndex + 1) % totalImages;
-            sliderDiv.style.transform = `translateX(-${currentIndex * 100}%)`;
+        const slider = document.getElementById("imageSlider");
+        const prevBtn = document.getElementById("prev");
+        const nextBtn = document.getElementById("next");
+    
+        let currentIndex = 0; // Vị trí ảnh hiện tại
+        let autoSlideInterval; // Biến lưu interval tự động chuyển slide
+    
+        function updateSlider() {
+            const offset = currentIndex * -100; // Dịch chuyển -100% mỗi slide
+            slider.style.transform = `translateX(${offset}%)`;
         }
-
-        setInterval(showNextImage, 3000);
+    
+        function nextSlide() {
+            if (currentIndex < slider.children.length - 1) {
+                currentIndex++;
+            } else {
+                currentIndex = 0; // Quay lại ảnh đầu tiên
+            }
+            updateSlider();
+        }
+    
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+            } else {
+                currentIndex = slider.children.length - 1; // Chuyển đến ảnh cuối cùng
+            }
+            updateSlider();
+        }
+    
+        nextBtn.addEventListener("click", () => {
+            nextSlide();
+            resetAutoSlide(); // Reset timer khi người dùng click
+        });
+    
+        prevBtn.addEventListener("click", () => {
+            prevSlide();
+            resetAutoSlide(); // Reset timer khi người dùng click
+        });
+    
+        // Tự động chuyển slide sau mỗi 5 giây
+        function startAutoSlide() {
+            autoSlideInterval = setInterval(() => {
+                nextSlide();
+            }, 5000);
+        }
+    
+        // Reset auto slide timer
+        function resetAutoSlide() {
+            clearInterval(autoSlideInterval);
+            startAutoSlide();
+        }
+    
+        // Bắt đầu auto slide khi trang load
+        startAutoSlide();
+    
+        // Dừng auto slide khi hover vào slider
+        slider.addEventListener("mouseenter", () => {
+            clearInterval(autoSlideInterval);
+        });
+    
+        // Tiếp tục auto slide khi rời chuột
+        slider.addEventListener("mouseleave", () => {
+            startAutoSlide();
+        });
     </script>
 </body>
 

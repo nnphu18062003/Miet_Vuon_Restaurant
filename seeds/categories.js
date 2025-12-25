@@ -8,10 +8,9 @@ exports.seed = async function(knex) {
   await knex('products').del()
   await knex('categories').del()
   await knex('categories').insert([
-    {category_id: 1, name: 'Burger'},
-    {category_id: 2, name: 'Pizza'},
-    {category_id: 3, name: 'Gà Rán'},
-    {category_id: 4, name: 'Đồ Ăn Nhẹ'},
-    {category_id: 5, name: 'Đồ Uống'}
+    {category_id: 1, name: 'Khai Vị'},
+    {category_id: 2, name: 'Món chính'},
+    {category_id: 3, name: 'Món phụ'},
+    {category_id: 4, name: 'Đồ uống'}
   ]);
 };
