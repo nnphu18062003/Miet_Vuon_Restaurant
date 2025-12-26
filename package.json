@@ -10,7 +10,7 @@
 		"seed:dev": "",
 		"setup-db:dev": "npm run create-db && npm run migrate:dev && npm run seed:dev",
 		"start-server:dev": "nodemon server.js --watch ./views --ext ejs,html",
-		"dev": "npm run setup-db:dev && npm run start-server:dev nodemon --inspect server.js",
+		"dev": "npm run setup-db:dev && npm run start-server:dev",
 		"migrate:prod": "knex migrate:latest --env production",
 		"seed:prod": "",
 		"setup:prod": "npm run create-db && npm run migrate:prod && npm run seed:prod",
@@ -18,7 +18,7 @@
 		"build:css": "npx tailwindcss -i ./public/css/main.css -o ./dist/main.css",
 		"serve": "five-server",
 		"fe:start": "concurrently \"npm run build:css\" \"npm run serve\"",
-		"start: ": "nodemon --inspect server.js"
+		"start": "nodemon --inspect server.js"
 	},
 	"author": "Nguyen Ngoc Phu",
 	"license": "ISC",
