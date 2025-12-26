@@ -4,6 +4,14 @@ const router = express.Router();
 
 require('./login/passport.js');
 
+// Middleware để kiểm tra admin đã đăng nhập chưa
+function ensureAdmin(req, res, next) {
+    if (req.isAuthenticated() && req.user.role === false) {
+        return next();
+    }
+    res.redirect('/admin/login');
+}
+
 module.exports = function(app) {
     app.use('/admin', router);
     
@@ -16,6 +24,22 @@ module.exports = function(app) {
         successRedirect: '/admin/dashboard',
         failureFlash: true,
     }));
+    
+    // Dashboard route
+    router.get('/dashboard', ensureAdmin, (req, res) => {
+        // TODO: Lấy dữ liệu thực từ database
+        // Tạm thời dùng dữ liệu mẫu
+        res.render('admin_views/admin_index', {
+            revenue: 0,
+            totalOrder: 0,
+            customers: 0
+        });
+    });
+    
+    // Redirect /admin về /admin/dashboard
+    router.get('/', ensureAdmin, (req, res) => {
+        res.redirect('/admin/dashboard');
+    });
     
     // Add other admin routes here as needed
 };

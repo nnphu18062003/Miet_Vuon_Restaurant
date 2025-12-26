@@ -103,8 +103,8 @@ app.use("/orderList", orderListRouter);
 
 // Call the adminRouter function and pass the app as an argument
 // const adminRouter = require("./routes/admin/index.route.js");
-// const adminRouter = require('./admin/index.route');
-// adminRouter(app);
+const adminRouter = require('./admin/index.route');
+adminRouter(app);
 
 app.get('/about', (req, res) => {
   res.render('about', { title: 'Trang chủ' });
