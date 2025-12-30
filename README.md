@@ -1,4 +1,4 @@
-# Miet Vuon Restaurant (HCMUS-WAD-GA03)
+# Miet Vuon Restaurant 
 
 Dự án website nhà hàng Miệt Vườn.
 
