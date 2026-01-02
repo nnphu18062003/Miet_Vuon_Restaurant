@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Không tìm thấy trang</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+    <link href="/css/admin-modern.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: var(--gray-50);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 500px;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            line-height: 1;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 10px rgba(76, 175, 80, 0.2);
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+        }
+
+        .error-message {
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--primary-green);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 99px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(76, 175, 80, 0.3);
+        }
+
+        .home-btn:hover {
+            background: var(--primary-green-dark, #43a047);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(76, 175, 80, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="error-container">
+        <div class="error-code">404</div>
+        <h1 class="error-title">Oops! Trang không tồn tại</h1>
+        <p class="error-message">
+            Trang bạn đang tìm kiếm có thể đã bị xóa, đổi tên hoặc tạm thời không truy cập được.
+        </p>
+        <a href="/admin/dashboard" class="home-btn">
+            <i class="fas fa-home"></i> Trở về Dashboard
+        </a>
+    </div>
+</body>
+
+</html>

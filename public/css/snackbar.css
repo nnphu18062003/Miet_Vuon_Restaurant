@@ -1,0 +1,124 @@
+/* Snackbar Notification System */
+.snackbar-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.snackbar {
+    min-width: 300px;
+    max-width: 500px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    pointer-events: all;
+    animation: slideIn 0.3s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.snackbar.removing {
+    animation: slideOut 0.3s ease-in forwards;
+}
+
+/* Snackbar Types */
+.snackbar.success {
+    background-color: #10b981;
+    color: white;
+}
+
+.snackbar.error {
+    background-color: #ef4444;
+    color: white;
+}
+
+.snackbar.warning {
+    background-color: #f59e0b;
+    color: white;
+}
+
+.snackbar.info {
+    background-color: #3b82f6;
+    color: white;
+}
+
+/* Snackbar Icon */
+.snackbar-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+/* Snackbar Message */
+.snackbar-message {
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Snackbar Close Button */
+.snackbar-close {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.snackbar-close:hover {
+    opacity: 1;
+}
+
+/* Progress Bar */
+.snackbar-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background-color: rgba(255, 255, 255, 0.3);
+    animation: progress linear forwards;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}
+
+@keyframes progress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}

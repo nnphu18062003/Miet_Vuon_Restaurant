@@ -12,4 +12,5 @@ COPY . .
 
 EXPOSE 4000
 
-CMD ["npm", "run", "dev"]
+# Only run migrations on startup, NOT seeds
+CMD ["sh", "-c", "npm run db:migrate && npm start"]

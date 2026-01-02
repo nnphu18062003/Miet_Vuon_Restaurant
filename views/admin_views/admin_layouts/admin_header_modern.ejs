@@ -1,0 +1,240 @@
+<!-- Modern Header -->
+<header class="modern-header">
+    <style>
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 0.5rem 0;
+            min-width: 200px;
+            display: none;
+            z-index: 1000;
+            border: 1px solid var(--gray-200);
+        }
+
+        .dropdown-menu.show {
+            display: block;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: var(--gray-50);
+            color: var(--primary-green);
+        }
+
+        .dropdown-item i {
+            width: 1.25rem;
+            text-align: center;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--gray-200);
+            margin: 0.5rem 0;
+        }
+
+        .text-danger {
+            color: var(--error) !important;
+        }
+
+        .text-danger:hover {
+            background: #FEF2F2 !important;
+        }
+
+        /* Search styling update */
+        .header-search form {
+            width: 100%;
+        }
+    </style>
+
+    <!-- Sidebar Toggle -->
+    <button id="sidebarToggle" class="header-btn">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Breadcrumb -->
+    <nav class="header-breadcrumb">
+        <div class="breadcrumb-item">
+            <i class="fas fa-home"></i>
+            <span>Admin</span>
+        </div>
+        <% if (locals.breadcrumb && breadcrumb.length> 0) { %>
+            <% breadcrumb.forEach((item, index)=> { %>
+                <span class="breadcrumb-separator">/</span>
+                <div class="breadcrumb-item">
+                    <% if (index===breadcrumb.length - 1) { %>
+                        <span class="breadcrumb-current">
+                            <%= item %>
+                        </span>
+                        <% } else { %>
+                            <span>
+                                <%= item %>
+                            </span>
+                            <% } %>
+                </div>
+                <% }) %>
+                    <% } %>
+    </nav>
+
+    <!-- Search Bar -->
+    <div class="header-search">
+        <form action="/admin/products" method="GET" style="position: relative;">
+            <i class="fas fa-search"
+                style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--gray-400);"></i>
+            <input type="text" name="search" class="search-input" placeholder="Tìm kiếm sản phẩm..."
+                value="<%= locals.searchQuery || '' %>">
+        </form>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+        <!-- Notifications -->
+        <div style="position: relative;">
+            <button class="header-btn" title="Thông báo" onclick="toggleDropdown(event, 'notifyDropdown')">
+                <i class="fas fa-bell"></i>
+                <% if (locals.hasNotifications) { %>
+                    <span class="header-btn-badge"></span>
+                    <% } %>
+            </button>
+            <div id="notifyDropdown" class="dropdown-menu" style="width: 300px;">
+                <div style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--gray-200);">
+                    <h6 style="margin: 0; font-weight: 600;">Thông báo</h6>
+                </div>
+                <div style="padding: 2rem; text-align: center; color: var(--gray-500);">
+                    <i class="fas fa-bell-slash" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                    <p style="margin: 0; font-size: 0.875rem;">Không có thông báo mới</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div style="position: relative;">
+            <button class="header-btn" title="Tin nhắn" onclick="toggleDropdown(event, 'msgDropdown')">
+                <i class="fas fa-envelope"></i>
+            </button>
+            <div id="msgDropdown" class="dropdown-menu" style="width: 300px;">
+                <div style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--gray-200);">
+                    <h6 style="margin: 0; font-weight: 600;">Tin nhắn</h6>
+                </div>
+                <!-- Mock Message -->
+                <a href="/admin/customer" class="dropdown-item" style="border-bottom: 1px solid var(--gray-100);">
+                    <div style="display: flex; gap: 0.75rem; width: 100%;">
+                        <div
+                            style="width: 32px; height: 32px; background: var(--gray-200); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-user" style="font-size: 0.75rem; color: var(--gray-500);"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 0.875rem; font-weight: 500;">Hỗ trợ khách hàng</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-500);">Check lại đơn hàng #123...</div>
+                        </div>
+                        <span style="font-size: 0.75rem; color: var(--primary-green);">Mới</span>
+                    </div>
+                </a>
+                <div style="background: var(--gray-50); padding: 0.5rem; text-align: center;">
+                    <a href="/admin/customer"
+                        style="font-size: 0.75rem; color: var(--primary-green); text-decoration: none;">Xem tất cả</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Menu -->
+        <div class="user-menu" style="position: relative;" onclick="toggleDropdown(event, 'userDropdown')">
+            <div class="user-avatar">
+                <%= (locals.user && user.name) ? user.name.charAt(0).toUpperCase() : 'A' %>
+            </div>
+            <div class="user-info">
+                <div class="user-name">
+                    <%= locals.user ? user.name || user.email : 'Admin' %>
+                </div>
+                <div class="user-role">Administrator</div>
+            </div>
+            <i class="fas fa-chevron-down" style="color: var(--gray-400); font-size: 0.75rem;"></i>
+
+            <!-- Dropdown -->
+            <div id="userDropdown" class="dropdown-menu">
+                <div style="padding: 1rem; border-bottom: 1px solid var(--gray-200); margin-bottom: 0.5rem;">
+                    <div style="font-weight: 500; color: var(--gray-900);">
+                        <%= locals.user ? user.name : 'Admin' %>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500);">
+                        <%= locals.user ? user.email : 'admin@example.com' %>
+                    </div>
+                </div>
+                <a href="/admin/settings" class="dropdown-item">
+                    <i class="fas fa-user-circle"></i> Hồ sơ cá nhân
+                </a>
+                <a href="/admin/settings" class="dropdown-item">
+                    <i class="fas fa-cog"></i> Cài đặt hệ thống
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="/admin/logout" class="dropdown-item text-danger">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+    function toggleDropdown(e, id) {
+        if (e) e.stopPropagation();
+
+        // Close others
+        const dropdowns = ['notifyDropdown', 'msgDropdown', 'userDropdown'];
+        dropdowns.forEach(ddId => {
+            if (ddId !== id) {
+                const el = document.getElementById(ddId);
+                if (el) el.classList.remove('show');
+            }
+        });
+
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('show');
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function (e) {
+        const dropdowns = document.querySelectorAll('.dropdown-menu');
+        dropdowns.forEach(dd => {
+            if (dd.classList.contains('show')) {
+                dd.classList.remove('show');
+            }
+        });
+    });
+
+    // Sidebar Toggle
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebar = document.getElementById('modernSidebar');
+        const toggleBtn = document.getElementById('sidebarToggle');
+        const mainContent = document.querySelector('.modern-content');
+
+        if (toggleBtn && sidebar) {
+            // Restore state
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isCollapsed) {
+                sidebar.classList.add('collapsed');
+                if (mainContent) mainContent.classList.add('expanded');
+            }
+
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                if (mainContent) mainContent.classList.toggle('expanded');
+                localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+            });
+        }
+    });
+</script>

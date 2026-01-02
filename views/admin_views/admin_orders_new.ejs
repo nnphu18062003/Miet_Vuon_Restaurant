@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Đơn hàng - Miệt Vườn Restaurant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+        crossorigin="anonymous" />
+    <link href="/css/admin-modern.css" rel="stylesheet">
+    <link href="/css/snackbar.css" rel="stylesheet">
+</head>
+
+<body>
+    <%- include('admin_layouts/admin_sidebar_modern', { currentPage: 'orders' , pendingOrders: 0 }) %>
+        <%- include('admin_layouts/admin_header_modern', { breadcrumb: ['Quản lý', 'Đơn hàng' ], user: locals.user ||
+            {}, hasNotifications: false }) %>
+
+            <main class="modern-content">
+                <!-- Page Header -->
+                <div style="margin-bottom: 2rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h1
+                                style="font-size: 1.875rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem;">
+                                Quản lý Đơn hàng
+                            </h1>
+                            <p style="color: var(--gray-600);">Theo dõi và xử lý đơn hàng chi tiết</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="modern-card">
+                        <div class="card-body">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Tổng
+                                        đơn hàng</p>
+                                    <p style="font-size: 1.875rem; font-weight: 700; color: var(--gray-900);">
+                                        <%= pagination.total %>
+                                    </p>
+                                </div>
+                                <div
+                                    style="width: 48px; height: 48px; background: linear-gradient(135deg, #42A5F5, #1E88E5); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-shopping-bag" style="font-size: 1.5rem; color: white;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modern-card">
+                        <div class="card-body">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Chờ
+                                        xử lý</p>
+                                    <p style="font-size: 1.875rem; font-weight: 700; color: var(--warning-main);">
+                                        <%= orders.filter(o=> o.status === 'Pending').length %>
+                                            <!-- Note: This filter is only on current page, ideally should be total pending count from controller -->
+                                    </p>
+                                </div>
+                                <div
+                                    style="width: 48px; height: 48px; background: linear-gradient(135deg, #FFD54F, #FFB300); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-clock" style="font-size: 1.5rem; color: white;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modern-card">
+                        <div class="card-body">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Đã
+                                        hoàn thành</p>
+                                    <p style="font-size: 1.875rem; font-weight: 700; color: var(--primary-green);">
+                                        <%= orders.filter(o=> o.status === 'Completed').length %>
+                                    </p>
+                                </div>
+                                <div
+                                    style="width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary-green), #43A047); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-check-circle" style="font-size: 1.5rem; color: white;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="modern-card" style="margin-bottom: 2rem;">
+                    <div class="card-body">
+                        <form action="/admin/orders" method="GET"
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end;">
+                            <div>
+                                <label
+                                    style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--gray-700);">
+                                    Tìm kiếm
+                                </label>
+                                <div class="input-group" style="position: relative;">
+                                    <i class="fas fa-search"
+                                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gray-400);"></i>
+                                    <input type="text" name="search" value="<%= filters.search || '' %>"
+                                        placeholder="Mã đơn / Tên khách..."
+                                        style="width: 100%; padding: 0.625rem 1rem 0.625rem 2.5rem; border: 1px solid var(--gray-300); border-radius: 8px; font-size: 0.875rem;">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label
+                                    style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--gray-700);">
+                                    Trạng thái
+                                </label>
+                                <select name="status"
+                                    style="width: 100%; padding: 0.625rem 1rem; border: 1px solid var(--gray-300); border-radius: 8px; font-size: 0.875rem;">
+                                    <option value="">Tất cả trạng thái</option>
+                                    <option value="Pending" <%=filters.status==='Pending' ? 'selected' : '' %>>Chờ xử lý
+                                    </option>
+                                    <option value="Confirmed" <%=filters.status==='Confirmed' ? 'selected' : '' %>>Đã
+                                        xác nhận</option>
+                                    <option value="In Transit" <%=filters.status==='In Transit' ? 'selected' : '' %>
+                                        >Đang giao</option>
+                                    <option value="Completed" <%=filters.status==='Completed' ? 'selected' : '' %>>Hoàn
+                                        thành</option>
+                                    <option value="Canceled" <%=filters.status==='Canceled' ? 'selected' : '' %>>Đã hủy
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label
+                                    style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--gray-700);">
+                                    Ngày đặt
+                                </label>
+                                <input type="date" name="startDate" value="<%= filters.startDate || '' %>"
+                                    style="width: 100%; padding: 0.625rem 1rem; border: 1px solid var(--gray-300); border-radius: 8px; font-size: 0.875rem;">
+                            </div>
+
+                            <button type="submit" class="btn-modern btn-primary" style="height: 42px;">
+                                <i class="fas fa-filter"></i> Lọc đơn hàng
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Orders Table -->
+                <div class="modern-card">
+                    <div class="card-body" style="padding: 0;">
+                        <div class="table-responsive">
+                            <table class="modern-table" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding: 1rem 1.5rem; text-align: left;">Mã đơn hàng</th>
+                                        <th style="padding: 1rem 1.5rem; text-align: left;">Khách hàng</th>
+                                        <th style="padding: 1rem 1.5rem; text-align: left;">Ngày đặt</th>
+                                        <th style="padding: 1rem 1.5rem; text-align: left;">Tổng tiền</th>
+                                        <th style="padding: 1rem 1.5rem; text-align: center;">Trạng thái</th>
+                                        <th style="padding: 1rem 1.5rem; text-align: right;">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (orders.length===0) { %>
+                                        <tr>
+                                            <td colspan="6" style="padding: 4rem; text-align: center;">
+                                                <i class="fas fa-box-open"
+                                                    style="font-size: 3rem; color: var(--gray-300); margin-bottom: 1rem;"></i>
+                                                <p style="color: var(--gray-500);">Không tìm thấy đơn hàng nào</p>
+                                            </td>
+                                        </tr>
+                                        <% } else { %>
+                                            <% orders.forEach(order=> { %>
+                                                <tr>
+                                                    <td style="padding: 1rem 1.5rem;">
+                                                        <span
+                                                            style="font-family: monospace; font-weight: 600; color: var(--primary-green);">
+                                                            #<%= order.order_code || order.order_id %>
+                                                        </span>
+                                                    </td>
+                                                    <td style="padding: 1rem 1.5rem;">
+                                                        <div style="font-weight: 500; color: var(--gray-900);">
+                                                            <%= order.customer_name || 'Khách vãng lai' %>
+                                                        </div>
+                                                        <div style="font-size: 0.875rem; color: var(--gray-500);">
+                                                            <%= order.customer_email || order.phone %>
+                                                        </div>
+                                                    </td>
+                                                    <td style="padding: 1rem 1.5rem;">
+                                                        <%= new Date(order.created_at).toLocaleString('vi-VN') %>
+                                                    </td>
+                                                    <td style="padding: 1rem 1.5rem; font-weight: 600;">
+                                                        <%= new Intl.NumberFormat('vi-VN', { style: 'currency' ,
+                                                            currency: 'VND' }).format(order.total) %>
+                                                    </td>
+                                                    <td style="padding: 1rem 1.5rem; text-align: center;">
+                                                        <% let statusConfig={ 'Pending' : { color: '#ffb74d' ,
+                                                            text: 'Chờ xử lý' , icon: 'fa-clock' }, 'Confirmed' : {
+                                                            color: '#29b6f6' , text: 'Đã xác nhận' , icon: 'fa-check'
+                                                            }, 'In Transit' : { color: '#ab47bc' , text: 'Đang giao' ,
+                                                            icon: 'fa-shipping-fast' }, 'Completed' : { color: '#66bb6a'
+                                                            , text: 'Hoàn thành' , icon: 'fa-check-double' }, 'Canceled'
+                                                            : { color: '#ef5350' , text: 'Đã hủy' , icon: 'fa-times' }
+                                                            }; let config=statusConfig[order.status] || {
+                                                            color: '#9e9e9e' , text: order.status,
+                                                            icon: 'fa-info-circle' }; %>
+                                                            <span class="status-badge"
+                                                                style="background-color: <%= config.color %>20; color: <%= config.color %>; padding: 0.375rem 0.75rem; border-radius: 99px; font-size: 0.875rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.5rem;">
+                                                                <i class="fas <%= config.icon %>"></i>
+                                                                <%= config.text %>
+                                                            </span>
+                                                    </td>
+                                                    <td style="padding: 1rem 1.5rem; text-align: right;">
+                                                        <div class="action-buttons-wrapper"
+                                                            style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                                                            <button onclick="viewOrderDetails(<%= order.order_id %>)"
+                                                                class="btn-icon" title="Xem chi tiết"
+                                                                style="width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--gray-200); background: white; color: var(--gray-600); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                            <div class="relative inline-block text-left dropdown">
+                                                                <button onclick="toggleDropdown(<%= order.order_id %>)"
+                                                                    class="btn-icon" title="Cập nhật trạng thái"
+                                                                    style="width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--gray-200); background: white; color: var(--primary-green); cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+                                                                <!-- Status Dropdown Menu -->
+                                                                <div id="dropdown-<%= order.order_id %>"
+                                                                    class="dropdown-menu hidden"
+                                                                    style="position: absolute; right: 0; mt-2; width: 200px; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); z-index: 50; border: 1px solid var(--gray-200); overflow: hidden;">
+                                                                    <div class="py-1">
+                                                                        <% Object.keys(statusConfig).forEach(status=> {
+                                                                            %>
+                                                                            <button
+                                                                                onclick="updateStatus(<%= order.order_id %>, '<%= status %>')"
+                                                                                style="display: block; width: 100%; text-align: left; padding: 0.75rem 1rem; font-size: 0.875rem; color: var(--gray-700); background: none; border: none; cursor: pointer; transition: background 0.2s;"
+                                                                                onmouseover="this.style.backgroundColor='var(--gray-50)'"
+                                                                                onmouseout="this.style.backgroundColor='transparent'">
+                                                                                <%= statusConfig[status].text %>
+                                                                            </button>
+                                                                            <% }) %>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <% if (pagination.totalPages> 1) { %>
+                    <div class="modern-card" style="margin-top: 1.5rem;">
+                        <div class="card-body">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <p style="color: var(--gray-600); font-size: 0.875rem;">
+                                    Trang <%= pagination.page %> / <%= pagination.totalPages %>
+                                            <span style="color: var(--gray-500);">(Tổng <%= pagination.total %> đơn
+                                                    hàng)</span>
+                                </p>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <% if (pagination.hasPrev) { %>
+                                        <a href="?page=<%= pagination.page - 1 %>&status=<%= filters.status %>&search=<%= filters.search %>"
+                                            class="btn-modern btn-secondary" style="padding: 0.5rem 1rem;">
+                                            <i class="fas fa-chevron-left"></i> Trước
+                                        </a>
+                                        <% } %>
+
+                                            <% if (pagination.hasNext) { %>
+                                                <a href="?page=<%= pagination.page + 1 %>&status=<%= filters.status %>&search=<%= filters.search %>"
+                                                    class="btn-modern btn-primary" style="padding: 0.5rem 1rem;">
+                                                    Sau <i class="fas fa-chevron-right"></i>
+                                                </a>
+                                                <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                        <%- include('../admin_layouts/admin_footer_modern') %>
+            </main>
+
+            <!-- Order Detail Modal -->
+            <div id="orderDetailModal" class="modal"
+                style="display: none; position: fixed; inset: 0; background-color: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+                <div class="modal-content modern-card"
+                    style="width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; margin: 1rem;">
+                    <div
+                        style="padding: 1.5rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--gray-900);">Chi tiết đơn hàng</h3>
+                        <button onclick="closeModal()"
+                            style="background: none; border: none; font-size: 1.5rem; color: var(--gray-500); cursor: pointer;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div id="modalContent" style="padding: 1.5rem;">
+                        <!-- Content loaded dynamically -->
+                        <div style="text-align: center; color: var(--gray-500);">
+                            <i class="fas fa-spinner fa-spin"></i> Đang tải...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script src="/js/snackbar.js"></script>
+            <script>
+                // Show flash messages
+                document.addEventListener('DOMContentLoaded', function () {
+                    <% if (success && success.length > 0) { %>
+                        Snackbar.success('<%= success[0] %>');
+                    <% } %>
+                    <% if (error && error.length > 0) { %>
+                        Snackbar.error('<%= error[0] %>');
+                    <% } %>
+
+                        // Close dropdowns when clicking outside
+                        window.addEventListener('click', function (e) {
+                            if (!e.target.closest('.dropdown')) {
+                                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                                    menu.classList.add('hidden');
+                                });
+                            }
+                        });
+                });
+
+                function toggleDropdown(orderId) {
+                    const dropdown = document.getElementById(`dropdown-${orderId}`);
+                    // Close others
+                    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                        if (menu.id !== `dropdown-${orderId}`) {
+                            menu.classList.add('hidden');
+                        }
+                    });
+                    dropdown.classList.toggle('hidden');
+                }
+
+                async function updateStatus(orderId, status) {
+                    try {
+                        const response = await fetch(`/admin/orders/${orderId}/status`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ status })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.ok) {
+                            Snackbar.success('Cập nhật trạng thái thành công!');
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            Snackbar.error(data.message || 'Có lỗi xảy ra');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        Snackbar.error('Lỗi kết nối');
+                    }
+                }
+
+                async function viewOrderDetails(orderId) {
+                    const modal = document.getElementById('orderDetailModal');
+                    const content = document.getElementById('modalContent');
+                    modal.style.display = 'flex';
+
+                    try {
+                        const response = await fetch(`/admin/orders/${orderId}`);
+                        const data = await response.json();
+
+                        // Build modal content html
+                        const { order, items } = data;
+
+                        let html = `
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                                <div>
+                                    <h4 style="font-weight: 600; color: var(--gray-900); margin-bottom: 0.75rem;">Thông tin khách hàng</h4>
+                                    <p style="margin-bottom: 0.25rem;"><strong>Tên:</strong> ${order.customer_name || 'Khách vãng lai'}</p>
+                                    <p style="margin-bottom: 0.25rem;"><strong>Email:</strong> ${order.customer_email || 'N/A'}</p>
+                                    <p style="margin-bottom: 0.25rem;"><strong>SĐT:</strong> ${order.customer_phone || order.phone || 'N/A'}</p>
+                                    <p style="margin-bottom: 0.25rem;"><strong>Địa chỉ:</strong> ${order.address || 'N/A'}</p>
+                                </div>
+                                <div>
+                                    <h4 style="font-weight: 600; color: var(--gray-900); margin-bottom: 0.75rem;">Thông tin đơn hàng</h4>
+                                    <p style="margin-bottom: 0.25rem;"><strong>Mã đơn:</strong> #${order.order_code || order.order_id}</p>
+                                    <p style="margin-bottom: 0.25rem;"><strong>Ngày đặt:</strong> ${new Date(order.created_at).toLocaleString('vi-VN')}</p>
+                                    <p style="margin-bottom: 0.25rem;"><strong>Phương thức:</strong> ${order.payment_method || 'COD'}</p>
+                                    <p style="margin-bottom: 0.25rem;"><strong>Trạng thái:</strong> <span style="font-weight: 500;">${order.status}</span></p>
+                                </div>
+                            </div>
+                            
+                            <h4 style="font-weight: 600; color: var(--gray-900); margin-bottom: 1rem;">Danh sách sản phẩm</h4>
+                            <div style="border: 1px solid var(--gray-200); border-radius: 8px; overflow: hidden;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead style="background: var(--gray-50); border-bottom: 1px solid var(--gray-200);">
+                                        <tr>
+                                            <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.875rem;">Sản phẩm</th>
+                                            <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.875rem;">SL</th>
+                                            <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.875rem;">Đơn giá</th>
+                                            <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.875rem;">Thành tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${items.map(item => `
+                                            <tr style="border-bottom: 1px solid var(--gray-100);">
+                                                <td style="padding: 0.75rem 1rem;">
+                                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                        <img src="${item.product_url || '/images/default-food.png'}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">
+                                                        <span style="font-weight: 500;">${item.product_name}</span>
+                                                    </div>
+                                                </td>
+                                                <td style="padding: 0.75rem 1rem; text-align: center;">${item.quantity}</td>
+                                                <td style="padding: 0.75rem 1rem; text-align: right;">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}</td>
+                                                <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 500;">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price * item.quantity)}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                    <tfoot style="background: var(--gray-50);">
+                                        <tr>
+                                            <td colspan="3" style="padding: 1rem; text-align: right; font-weight: 700;">Tổng cộng:</td>
+                                            <td style="padding: 1rem; text-align: right; font-weight: 700; color: var(--primary-green); font-size: 1.125rem;">
+                                                ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.total)}
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        `;
+
+                        content.innerHTML = html;
+                    } catch (error) {
+                        console.error('Error loading details:', error);
+                        content.innerHTML = '<p style="color: red; text-align: center;">Không thể tải chi tiết đơn hàng</p>';
+                    }
+                }
+
+                function closeModal() {
+                    document.getElementById('orderDetailModal').style.display = 'none';
+                }
+
+                // Close modal on outside click
+                document.getElementById('orderDetailModal').addEventListener('click', function (e) {
+                    if (e.target === this) {
+                        closeModal();
+                    }
+                });
+            </script>
+</body>
+
+</html>

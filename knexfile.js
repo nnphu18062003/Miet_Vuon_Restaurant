@@ -8,39 +8,35 @@ require("dotenv").config();
 module.exports = {
 	development: {
 		client: "postgresql",
-		connection: {
-			host: `${process.env.DB_HOST}`,
-			user: `${process.env.DB_USERNAME}`,
-			password: `${process.env.DB_PASSWORD}`,
-			database: `${process.env.DB_NAME}`,
-			port: `${process.env.DB_PORT}`,
+		connection: process.env.DB_CONNECTION_STRING || {
+			host: process.env.DB_HOST || "localhost",
+			user: process.env.DB_USERNAME || "postgres",
+			password: process.env.DB_PASSWORD || "123",
+			database: process.env.DB_NAME || "postgres",
+			port: process.env.DB_PORT || 5432,
 			charset: "utf8",
 		},
-
 		migrations: {
 			directory: "./migrations",
 		},
-
 		seeds: {
 			directory: "./seeds",
 		},
 	},
-	production:{
+	production: {
 		client: "postgresql",
 		connection: {
 			connectionString: process.env.DB_CONNECTION_STRING,
 			ssl: {
-				rejectUnauthorized: false,
+				rejectUnauthorized: false, // Required for many cloud providers (Azure/Heroku/Render)
 			},
-			charset: "utf8",
 		},
-		
 		migrations: {
 			directory: "./migrations",
 		},
 		seeds: {
 			directory: "./seeds",
 		},
-	}
+	},
 };
 

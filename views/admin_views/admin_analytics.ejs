@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống kê - Miệt Vườn Restaurant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+        crossorigin="anonymous" />
+    <link href="/css/admin-modern.css" rel="stylesheet">
+    <link href="/css/snackbar.css" rel="stylesheet">
+    <script src="/js/snackbar.js"></script>
+</head>
+
+<body>
+    <%- include('admin_layouts/admin_sidebar_modern', { currentPage: 'analytics' , pendingOrders: 0 }) %>
+        <%- include('admin_layouts/admin_header_modern', { breadcrumb: ['Thống kê'], user: locals.user || {},
+            hasNotifications: false }) %>
+
+            <main class="modern-content">
+                <div style="margin-bottom: 2rem;">
+                    <h1 style="font-size: 1.875rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem;">
+                        Thống kê & Phân tích
+                    </h1>
+                    <p style="color: var(--gray-600);">Xem báo cáo và phân tích dữ liệu kinh doanh</p>
+                </div>
+
+                <!-- Coming Soon -->
+                <div class="modern-card">
+                    <div class="card-body" style="text-align: center; padding: 4rem 2rem;">
+                        <i class="fas fa-chart-line"
+                            style="font-size: 4rem; color: var(--primary-green); margin-bottom: 1.5rem;"></i>
+                        <h2
+                            style="font-size: 1.5rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.75rem;">
+                            Tính năng đang phát triển
+                        </h2>
+                        <p style="color: var(--gray-600); margin-bottom: 2rem;">
+                            Trang thống kê với biểu đồ và báo cáo chi tiết sẽ sớm được ra mắt
+                        </p>
+                        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                            <div
+                                style="padding: 1rem; background: var(--gray-50); border-radius: 8px; min-width: 200px;">
+                                <i class="fas fa-chart-bar"
+                                    style="font-size: 2rem; color: var(--info); margin-bottom: 0.5rem;"></i>
+                                <p style="font-weight: 500; color: var(--gray-900);">Biểu đồ doanh thu</p>
+                            </div>
+                            <div
+                                style="padding: 1rem; background: var(--gray-50); border-radius: 8px; min-width: 200px;">
+                                <i class="fas fa-chart-pie"
+                                    style="font-size: 2rem; color: var(--warning); margin-bottom: 0.5rem;"></i>
+                                <p style="font-weight: 500; color: var(--gray-900);">Phân tích đơn hàng</p>
+                            </div>
+                            <div
+                                style="padding: 1rem; background: var(--gray-50); border-radius: 8px; min-width: 200px;">
+                                <i class="fas fa-chart-line"
+                                    style="font-size: 2rem; color: var(--success); margin-bottom: 0.5rem;"></i>
+                                <p style="font-weight: 500; color: var(--gray-900);">Xu hướng khách hàng</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+</body>
+
+</html>

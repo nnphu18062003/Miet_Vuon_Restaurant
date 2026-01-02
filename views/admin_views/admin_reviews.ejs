@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Đánh giá - Miệt Vườn Restaurant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+        crossorigin="anonymous" />
+    <link href="/css/admin-modern.css" rel="stylesheet">
+    <link href="/css/snackbar.css" rel="stylesheet">
+    <script src="/js/snackbar.js"></script>
+</head>
+
+<body>
+    <%- include('admin_layouts/admin_sidebar_modern', { currentPage: 'reviews' , pendingOrders: 0 }) %>
+        <%- include('admin_layouts/admin_header_modern', { breadcrumb: ['Quản lý', 'Đánh giá' ], user: locals.user ||
+            {}, hasNotifications: false }) %>
+
+            <main class="modern-content">
+                <div class="page-header" style="margin-bottom: 2rem;">
+                    <h1 style="font-size: 1.875rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem;">
+                        Quản lý Đánh giá</h1>
+                    <p style="color: var(--gray-600);">Xem và quản lý đánh giá từ khách hàng</p>
+                </div>
+
+                <!-- Filters -->
+                <div class="modern-card" style="margin-bottom: 2rem;">
+                    <div class="card-body">
+                        <form method="GET" action="/admin/reviews"
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <div>
+                                <label
+                                    style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--gray-700);">Đánh
+                                    giá</label>
+                                <select name="rating"
+                                    style="width: 100%; padding: 0.625rem; border: 1px solid var(--gray-300); border-radius: 8px; font-size: 0.875rem;">
+                                    <option value="">Tất cả</option>
+                                    <option value="5" <%=filters.rating==='5' ? 'selected' : '' %>>⭐⭐⭐⭐⭐ (5 sao)
+                                    </option>
+                                    <option value="4" <%=filters.rating==='4' ? 'selected' : '' %>>⭐⭐⭐⭐ (4 sao)</option>
+                                    <option value="3" <%=filters.rating==='3' ? 'selected' : '' %>>⭐⭐⭐ (3 sao)</option>
+                                    <option value="2" <%=filters.rating==='2' ? 'selected' : '' %>>⭐⭐ (2 sao)</option>
+                                    <option value="1" <%=filters.rating==='1' ? 'selected' : '' %>>⭐ (1 sao)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label
+                                    style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--gray-700);">Trạng
+                                    thái</label>
+                                <select name="status"
+                                    style="width: 100%; padding: 0.625rem; border: 1px solid var(--gray-300); border-radius: 8px; font-size: 0.875rem;">
+                                    <option value="">Tất cả</option>
+                                    <option value="pending" <%=filters.status==='pending' ? 'selected' : '' %>>Chờ duyệt
+                                    </option>
+                                    <option value="approved" <%=filters.status==='approved' ? 'selected' : '' %>>Đã
+                                        duyệt</option>
+                                    <option value="rejected" <%=filters.status==='rejected' ? 'selected' : '' %>>Đã từ
+                                        chối</option>
+                                </select>
+                            </div>
+
+                            <div style="display: flex; align-items: flex-end; gap: 0.75rem;">
+                                <button type="submit" class="btn-modern btn-primary">
+                                    <i class="fas fa-filter"></i> Lọc
+                                </button>
+                                <a href="/admin/reviews" class="btn-modern btn-secondary">
+                                    <i class="fas fa-redo"></i> Reset
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Reviews List -->
+                <div class="modern-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Danh sách đánh giá (<%= pagination.total %>)</h2>
+                    </div>
+                    <div class="card-body" style="padding: 0;">
+                        <% if (reviews.length===0) { %>
+                            <div style="text-align: center; padding: 4rem 2rem; color: var(--gray-500);">
+                                <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                                <p>Chưa có đánh giá nào</p>
+                            </div>
+                            <% } else { %>
+                                <div style="display: grid; gap: 1px; background: var(--gray-200);">
+                                    <% reviews.forEach(review=> { %>
+                                        <div style="background: white; padding: 1.5rem;">
+                                            <div style="display: flex; gap: 1.5rem;">
+                                                <img src="<%= review.product_image %>" alt="<%= review.product_name %>"
+                                                    style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">
+
+                                                <div style="flex: 1;">
+                                                    <div
+                                                        style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem;">
+                                                        <div>
+                                                            <h3
+                                                                style="font-weight: 600; color: var(--gray-900); margin-bottom: 0.25rem;">
+                                                                <%= review.product_name %>
+                                                            </h3>
+                                                            <div style="font-size: 0.875rem; color: var(--gray-600);">
+                                                                <i class="fas fa-user"></i>
+                                                                <%= review.customer_name || review.customer_email %>
+                                                            </div>
+                                                        </div>
+
+                                                        <% let
+                                                            statusStyle='background: var(--gray-100); color: var(--gray-700);'
+                                                            ; let statusText='Chờ duyệt' ; if
+                                                            (review.status==='approved' ) {
+                                                            statusStyle='background: rgba(76, 175, 80, 0.1); color: var(--success);'
+                                                            ; statusText='Đã duyệt' ; } else if
+                                                            (review.status==='rejected' ) {
+                                                            statusStyle='background: rgba(239, 83, 80, 0.1); color: var(--error);'
+                                                            ; statusText='Từ chối' ; } %>
+                                                            <span
+                                                                style="padding: 0.375rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; <%= statusStyle %>">
+                                                                <%= statusText %>
+                                                            </span>
+                                                    </div>
+
+                                                    <div style="margin-bottom: 0.75rem;">
+                                                        <% for(let i=1; i <=5; i++) { %>
+                                                            <i class="fas fa-star"
+                                                                style="color: <%= i <= review.rating ? '#FFA726' : '#E0E0E0' %>; font-size: 1rem;"></i>
+                                                            <% } %>
+                                                                <span
+                                                                    style="margin-left: 0.5rem; font-size: 0.875rem; color: var(--gray-600);">
+                                                                    <%= new
+                                                                        Date(review.created_at).toLocaleDateString('vi-VN')
+                                                                        %>
+                                                                </span>
+                                                    </div>
+
+                                                    <% if (review.comment) { %>
+                                                        <p
+                                                            style="color: var(--gray-700); line-height: 1.6; margin-bottom: 1rem;">
+                                                            <%= review.comment %>
+                                                        </p>
+                                                        <% } %>
+
+                                                            <div style="display: flex; gap: 0.75rem;">
+                                                                <% if (review.status !=='approved' ) { %>
+                                                                    <button
+                                                                        onclick="updateReviewStatus(<%= review.review_id %>, 'approved')"
+                                                                        class="btn-modern btn-primary"
+                                                                        style="font-size: 0.875rem; padding: 0.5rem 1rem;">
+                                                                        <i class="fas fa-check"></i> Duyệt
+                                                                    </button>
+                                                                    <% } %>
+                                                                        <% if (review.status !=='rejected' ) { %>
+                                                                            <button
+                                                                                onclick="updateReviewStatus(<%= review.review_id %>, 'rejected')"
+                                                                                class="btn-modern btn-secondary"
+                                                                                style="font-size: 0.875rem; padding: 0.5rem 1rem;">
+                                                                                <i class="fas fa-times"></i> Từ chối
+                                                                            </button>
+                                                                            <% } %>
+                                                                                <button
+                                                                                    onclick="deleteReview(<%= review.review_id %>)"
+                                                                                    class="btn-modern btn-outline"
+                                                                                    style="font-size: 0.875rem; padding: 0.5rem 1rem; color: var(--error); border-color: var(--error);">
+                                                                                    <i class="fas fa-trash"></i> Xóa
+                                                                                </button>
+                                                            </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% }) %>
+                                </div>
+                                <% } %>
+                    </div>
+                </div>
+            </main>
+
+            <script>
+                async function updateReviewStatus(reviewId, status) {
+                    try {
+                        const response = await fetch(`/admin/reviews/${reviewId}/status`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ status })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.ok) {
+                            Snackbar.success(data.message);
+                            setTimeout(() => window.location.reload(), 1000);
+                        } else {
+                            Snackbar.error(data.message);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        Snackbar.error('Có lỗi xảy ra');
+                    }
+                }
+
+                async function deleteReview(reviewId) {
+                    if (!confirm('Bạn có chắc muốn xóa đánh giá này?')) return;
+
+                    try {
+                        const response = await fetch(`/admin/reviews/${reviewId}`, {
+                            method: 'DELETE'
+                        });
+
+                        const data = await response.json();
+
+                        if (data.ok) {
+                            Snackbar.success(data.message);
+                            setTimeout(() => window.location.reload(), 1000);
+                        } else {
+                            Snackbar.error(data.message);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        Snackbar.error('Có lỗi xảy ra');
+                    }
+                }
+            </script>
+</body>
+
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Sản phẩm - Miệt Vườn Restaurant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+        crossorigin="anonymous" />
+    <link href="/css/admin-modern.css" rel="stylesheet">
+    <link href="/css/snackbar.css" rel="stylesheet">
+</head>
+
+<body>
+    <%- include('admin_layouts/admin_sidebar_modern', { currentPage: 'products' , pendingOrders: 0 }) %>
+        <%- include('admin_layouts/admin_header_modern', { breadcrumb: ['Quản lý', 'Sản phẩm' ], user: locals.user ||
+            {}, hasNotifications: false }) %>
+
+            <main class="modern-content">
+                <!-- Page Header -->
+                <div style="margin-bottom: 2rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h1
+                                style="font-size: 1.875rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem;">
+                                Quản lý Sản phẩm
+                            </h1>
+                            <p style="color: var(--gray-600);">Quản lý thực đơn và món ăn của nhà hàng</p>
+                        </div>
+                        <button class="js-add btn-modern btn-primary" style="font-size: 1rem; padding: 0.75rem 1.5rem;">
+                            <i class="fas fa-plus"></i> Thêm món mới
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="modern-card">
+                        <div class="card-body">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Tổng
+                                        sản phẩm</p>
+                                    <p style="font-size: 1.875rem; font-weight: 700; color: var(--gray-900);">
+                                        <%= pagination.total || products.length %>
+                                    </p>
+                                </div>
+                                <div
+                                    style="width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary-green), #81C784); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-utensils" style="font-size: 1.5rem; color: white;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modern-card">
+                        <div class="card-body">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Danh
+                                        mục</p>
+                                    <p style="font-size: 1.875rem; font-weight: 700; color: var(--gray-900);">
+                                        <%= categories.length %>
+                                    </p>
+                                </div>
+                                <div
+                                    style="width: 48px; height: 48px; background: linear-gradient(135deg, #42A5F5, #1E88E5); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-tags" style="font-size: 1.5rem; color: white;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modern-card">
+                        <div class="card-body">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Đang
+                                        giảm giá</p>
+                                    <p style="font-size: 1.875rem; font-weight: 700; color: var(--gray-900);">
+                                        <%= products.filter(p=> p.is_discount_active && p.discount > 0).length %>
+                                    </p>
+                                </div>
+                                <div
+                                    style="width: 48px; height: 48px; background: linear-gradient(135deg, #EF5350, #E53935); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-percent" style="font-size: 1.5rem; color: white;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modern-card">
+                        <div class="card-body">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div>
+                                    <p style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Best
+                                        Sellers</p>
+                                    <p style="font-size: 1.875rem; font-weight: 700; color: var(--gray-900);">
+                                        <%= products.filter(p=> p.is_best_seller).length %>
+                                    </p>
+                                </div>
+                                <div
+                                    style="width: 48px; height: 48px; background: linear-gradient(135deg, #FFD700, #FFC107); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-star" style="font-size: 1.5rem; color: white;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search & Filter -->
+                <div class="modern-card" style="margin-bottom: 2rem;">
+                    <div class="card-body">
+                        <div
+                            style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: flex-end;">
+                            <div>
+                                <label
+                                    style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--gray-700);">
+                                    <i class="fas fa-search"></i> Tìm kiếm
+                                </label>
+                                <input type="text" id="searchInput" placeholder="Tìm theo tên món..."
+                                    value="<%= search || '' %>"
+                                    style="width: 100%; padding: 0.625rem 1rem; border: 1px solid var(--gray-300); border-radius: 8px; font-size: 0.875rem;">
+                            </div>
+                            <div>
+                                <label
+                                    style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--gray-700);">
+                                    <i class="fas fa-filter"></i> Danh mục
+                                </label>
+                                <select id="categoryFilter"
+                                    style="width: 100%; padding: 0.625rem 1rem; border: 1px solid var(--gray-300); border-radius: 8px; font-size: 0.875rem;">
+                                    <option value="">Tất cả danh mục</option>
+                                    <% categories.forEach(cat=> { %>
+                                        <option value="<%= cat.category_id %>" <%=category==cat.category_id ? 'selected'
+                                            : '' %>>
+                                            <%= cat.name %>
+                                        </option>
+                                        <% }) %>
+                                </select>
+                            </div>
+                            <button onclick="applyFilters()" class="btn-modern btn-secondary">
+                                <i class="fas fa-search"></i> Tìm kiếm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Grid -->
+                <% if (products.length===0) { %>
+                    <div class="modern-card">
+                        <div class="card-body" style="text-align: center; padding: 4rem 2rem;">
+                            <i class="fas fa-inbox"
+                                style="font-size: 4rem; color: var(--gray-400); margin-bottom: 1rem;"></i>
+                            <h3
+                                style="font-size: 1.25rem; font-weight: 600; color: var(--gray-700); margin-bottom: 0.5rem;">
+                                Không có sản phẩm nào
+                            </h3>
+                            <p style="color: var(--gray-500);">Không tìm thấy sản phẩm phù hợp với từ khóa tìm kiếm</p>
+                        </div>
+                    </div>
+                    <% } else { %>
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                            <% products.forEach(product=> { %>
+                                <%- include('components/product_card', { product: product }) %>
+                                    <% }) %>
+                        </div>
+                        <% } %>
+
+                            <!-- Pagination -->
+                            <% if (pagination && pagination.totalPages> 1) { %>
+                                <div class="modern-card">
+                                    <div class="card-body">
+                                        <div
+                                            style="display: flex; justify-content: space-between; align-items: center;">
+                                            <p style="color: var(--gray-600); font-size: 0.875rem;">
+                                                Trang <%= pagination.page %> / <%= pagination.totalPages %>
+                                                        <span style="color: var(--gray-500);">(Tổng <%= pagination.total
+                                                                %> sản phẩm)</span>
+                                            </p>
+                                            <div style="display: flex; gap: 0.5rem;">
+                                                <% if (pagination.hasPrev) { %>
+                                                    <a href="?page=<%= pagination.page - 1 %><%= search ? '&search=' + search : '' %><%= category ? '&category=' + category : '' %>"
+                                                        class="btn-modern btn-secondary" style="padding: 0.5rem 1rem;">
+                                                        <i class="fas fa-chevron-left"></i> Trước
+                                                    </a>
+                                                    <% } %>
+
+                                                        <% if (pagination.hasNext) { %>
+                                                            <a href="?page=<%= pagination.page + 1 %><%= search ? '&search=' + search : '' %><%= category ? '&category=' + category : '' %>"
+                                                                class="btn-modern btn-primary"
+                                                                style="padding: 0.5rem 1rem;">
+                                                                Sau <i class="fas fa-chevron-right"></i>
+                                                            </a>
+                                                            <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+                                    <%- include('../admin_layouts/admin_footer_modern') %>
+            </main>
+
+            <!-- Modals -->
+            <%- include('components/product_modals') %>
+
+                <!-- Scripts -->
+                <script>
+                    // Flash messages
+                    document.addEventListener('DOMContentLoaded', function () {
+            <% if (locals.success && success.length > 0) { %>
+                            Snackbar.success('<%= success[0] %>');
+            <% } %>
+            <% if (locals.error && error.length > 0) { %>
+                            Snackbar.error('<%= error[0] %>');
+            <% } %>
+        });
+                </script>
+                <script src="/js/snackbar.js"></script>
+                <script src="/admin/js/product_manager.js"></script>
+</body>
+
+</html>

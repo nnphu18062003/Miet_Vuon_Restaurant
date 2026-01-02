@@ -56,5 +56,22 @@ Các biến môi trường được cấu hình trong file `.env` và `docker-co
 *   Server Port: `4000`
 *   Database: `postgres` (User: `postgres`, Pass: `123`)
 
-## Lưu ý
-*   Hiện tại module `admin` đang được tạm ẩn để đảm bảo tính ổn định khi chạy.
+## Truy cập trang Admin (Quản trị viên)
+
+Module admin đã được kích hoạt. Để truy cập, bạn cần một tài khoản có quyền admin.
+
+1.  **Tạo tài khoản Admin mặc định**
+    Chạy lệnh sau để tạo tài khoản admin (nếu chưa có):
+    ```bash
+    npm run create-admin
+    ```
+    *Lệnh này sẽ tạo user: `admin@gmail.com` / `admin123`*
+
+2.  **Đăng nhập trang Admin**
+    Truy cập: [http://localhost:4000/admin/login](http://localhost:4000/admin/login)
+    *   Email: `admin@gmail.com`
+    *   Password: `admin123`
+
+3.  **Dashboard**
+    Sau khi đăng nhập thành công, bạn sẽ được chuyển đến trang Dashboard quản lý.
+

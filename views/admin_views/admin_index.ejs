@@ -1,94 +1,185 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth font-sans">
+<html lang="vi">
+
 <head>
-    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon"> 
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miet Vuon Restaurant Admin</title>
-    <link rel="stylesheet" href="/css/all.min.css" />
-    <link rel="stylesheet" href="/css/style.css" />
+    <title>Dashboard - Miệt Vườn Restaurant</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lalezar&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+        crossorigin="anonymous" />
+    <link href="/css/admin-modern.css" rel="stylesheet">
+    <link href="/css/snackbar.css" rel="stylesheet">
+    <link href="/css/admin-modern.css" rel="stylesheet">
+    <link href="/css/snackbar.css" rel="stylesheet">
 </head>
 
 <body>
-    <div id="main" class="relative">
-        <%- include('admin_layouts/admin_mainLayout', { content: locals.body }) %>
+    <%- include('admin_layouts/admin_sidebar_modern', { currentPage: 'dashboard' , pendingOrders: 0 }) %>
+        <%- include('admin_layouts/admin_header_modern', { breadcrumb: ['Dashboard'], user: locals.user || {},
+            hasNotifications: false }) %>
 
-        <div class="min-h-screen bg-gray-50 pt-[120px] pb-8">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <!-- Revenue Card (Non-clickable) -->
-                    <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <div class="p-6">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h3 class="text-2xl font-bold text-gray-800">
-                                        <%= revenue.toLocaleString('vi-VN') %>VNĐ
-                                    </h3>
-                                    <p class="text-gray-500 mt-1">Doanh thu</p>
-                                </div>
-                                <div class="p-4 bg-amber-50 rounded-full">
-                                    <i class="fas fa-sack-dollar text-2xl text-amber-500"></i>
-                                </div>
+            <main class="modern-content">
+                <!-- Page Header -->
+                <div style="margin-bottom: 2rem;">
+                    <h1 style="font-size: 1.875rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem;">
+                        Dashboard
+                    </h1>
+                    <p style="color: var(--gray-600);">Tổng quan hoạt động nhà hàng</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <!-- Revenue Card -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon green">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">
+                            <%= revenue.toLocaleString('vi-VN') %> VNĐ
+                        </div>
+                        <div class="stat-label">Tổng doanh thu</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +12.5% so với tháng trước
+                        </div>
+                    </div>
+
+                    <!-- Orders Card -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon blue">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">
+                            <%= totalOrders %>
+                        </div>
+                        <div class="stat-label">Tổng đơn hàng</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +8.2%
+                        </div>
+                    </div>
+
+                    <!-- Customers Card -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon orange">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">
+                            <%= totalCustomers %>
+                        </div>
+                        <div class="stat-label">Khách hàng</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +15.3%
+                        </div>
+                    </div>
+
+                    <!-- Products Card -->
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon green">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">
+                            <%= totalProducts %>
+                        </div>
+                        <div class="stat-label">Sản phẩm</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions & System Info -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                    <!-- Quick Actions -->
+                    <div class="modern-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Thao tác nhanh</h2>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: grid; gap: 1rem;">
+                                <a href="/admin/products?page=1" class="btn-modern btn-primary"
+                                    style="justify-content: center;">
+                                    <i class="fas fa-plus"></i> Thêm sản phẩm mới
+                                </a>
+                                <a href="/admin/orders" class="btn-modern btn-outline" style="justify-content: center;">
+                                    <i class="fas fa-shopping-cart"></i> Xem đơn hàng
+                                </a>
+                                <a href="/admin/customer" class="btn-modern btn-outline"
+                                    style="justify-content: center;">
+                                    <i class="fas fa-users"></i> Quản lý khách hàng
+                                </a>
+                                <a href="/admin/reviews" class="btn-modern btn-outline"
+                                    style="justify-content: center;">
+                                    <i class="fas fa-star"></i> Xem đánh giá
+                                </a>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Orders Card (Clickable) -->
-                    <a href="/admin/orders" class="block">
-                        <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-6">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h3 class="text-2xl font-bold text-gray-800">
-                                        <%= totalOrder.toLocaleString('vi-VN') %>
-                                    </h3>
-                                    <p class="text-gray-500 mt-1">Đơn hàng</p>
+                    <!-- System Info -->
+                    <div class="modern-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Thông tin hệ thống</h2>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: grid; gap: 1rem;">
+                                <div
+                                    style="display: flex; justify-content: space-between; padding: 0.75rem; background: var(--gray-50); border-radius: 8px;">
+                                    <span style="color: var(--gray-600);">Phiên bản</span>
+                                    <span style="font-weight: 600;">v1.0.0</span>
                                 </div>
-                                <div class="p-4 bg-blue-50 rounded-full">
-                                    <i class="fas fa-shopping-cart text-2xl text-blue-500"></i>
+                                <div
+                                    style="display: flex; justify-content: space-between; padding: 0.75rem; background: var(--gray-50); border-radius: 8px;">
+                                    <span style="color: var(--gray-600);">Cập nhật lần cuối</span>
+                                    <span style="font-weight: 600;">
+                                        <%= new Date().toLocaleDateString('vi-VN') %>
+                                    </span>
+                                </div>
+                                <div
+                                    style="display: flex; justify-content: space-between; padding: 0.75rem; background: var(--gray-50); border-radius: 8px;">
+                                    <span style="color: var(--gray-600);">Trạng thái</span>
+                                    <span style="color: var(--success); font-weight: 600;">
+                                        <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Hoạt động
+                                    </span>
                                 </div>
                             </div>
                         </div>
-                    </a>
-
-                    <!-- Customers Card (Clickable) -->
-                    <a href="/admin/customer" class="block">
-                        <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-6">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h3 class="text-2xl font-bold text-gray-800">
-                                        <%= customers.toLocaleString('vi-VN') %>
-                                    </h3>
-                                    <p class="text-gray-500 mt-1">Khách hàng</p>
-                                </div>
-                                <div class="p-4 bg-green-50 rounded-full">
-                                    <i class="fas fa-users text-2xl text-green-500"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-
-                    <!-- Products Card (Clickable) -->
-                    <a href="/admin/products?page=1" class="block">
-                        <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-6">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h3 class="text-2xl font-bold text-gray-800">25</h3>
-                                    <p class="text-gray-500 mt-1">Sản phẩm</p>
-                                </div>
-                                <div class="p-4 bg-purple-50 rounded-full">
-                                    <i class="fas fa-box text-2xl text-purple-500"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
+
+                <!-- Welcome Banner -->
+                <div class="modern-card"
+                    style="margin-top: 2rem; background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-dark) 100%); border: none;">
+                    <div class="card-body" style="text-align: center; padding: 3rem 2rem;">
+                        <h2 style="color: white; font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">
+                            Chào mừng đến với Miệt Vườn Admin
+                        </h2>
+                        <p style="color: rgba(255, 255, 255, 0.9); font-size: 1rem;">
+                            Quản lý nhà hàng của bạn một cách chuyên nghiệp và hiệu quả
+                        </p>
+                    </div>
+                </div>
+                <%- include('../admin_layouts/admin_footer_modern') %>
+            </main>
+
+            <script src="/js/snackbar.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+            <% if (locals.success && success.length > 0) { %>
+                        Snackbar.success('<%= success[0] %>');
+            <% } %>
+            <% if (locals.error && error.length > 0) { %>
+                        Snackbar.error('<%= error[0] %>');
+            <% } %>
+        });
+            </script>
 </body>
+
 </html>

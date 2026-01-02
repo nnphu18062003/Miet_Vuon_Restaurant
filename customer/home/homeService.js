@@ -4,10 +4,10 @@ const pool = require('../../config/database');
 async function getBestSallerFood() {
   try {
     const result = await pool.query(
-        `
+      `
         SELECT p.*
         FROM products p
-        ORDER BY sold DESC
+        ORDER BY is_best_seller DESC, sold DESC
         LIMIT 4
         `
     );
@@ -21,5 +21,5 @@ async function getBestSallerFood() {
 }
 
 module.exports = {
-    getBestSallerFood,
+  getBestSallerFood,
 };

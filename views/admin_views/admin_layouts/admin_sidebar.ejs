@@ -1,53 +1,70 @@
 <div id="sidebar">
     <input type="checkbox" id="check" class="hidden">
     <label for="check">
-        <i class="fixed cursor-pointer z-[2] left-[40px] top-[85px] text-[35px] bg-[#66BB6A] px-3 py-1.5 rounded-sm transition-all duration-[0.5s] fa-solid fa-bars" id="btn"></i>
-        <i class="fixed cursor-pointer z-[2] top-[85px] left-[-215px] text-[25px] text-white bg-black px-[4px] py-[2px] rounded-sm transition-all duration-[0.5s] ease-in-out fa-solid fa-xmark" id="cancel"></i>
-    </label>    
+        <i class="fixed cursor-pointer z-[2] left-[40px] top-[85px] text-[35px] bg-[#66BB6A] px-3 py-1.5 rounded-sm transition-all duration-[0.5s] fa-solid fa-bars"
+            id="btn"></i>
+        <i class="fixed cursor-pointer z-[2] top-[85px] left-[-215px] text-[25px] text-white bg-black px-[4px] py-[2px] rounded-sm transition-all duration-[0.5s] ease-in-out fa-solid fa-xmark"
+            id="cancel"></i>
+    </label>
 
-    <div id="sidebar-menu" class="shadow-customX fixed z-[1] left-[-250px] mt-[65px] w-[250px] h-full bg-[#66BB6A] font-medium transition-all duration-[0.5s] ease-in-out">
-        
-        <header  class="text-white text-[29px] font-roboto-condensed uppercase text-center leading-[70px]">Admin</header>
+    <div id="sidebar-menu"
+        class="shadow-customX fixed z-[1] left-[-250px] mt-[65px] w-[250px] h-full bg-[#66BB6A] font-medium transition-all duration-[0.5s] ease-in-out">
+
+        <header class="text-white text-[29px] font-roboto-condensed uppercase text-center leading-[70px]">Admin</header>
 
         <ul class="nav">
             <li>
-                <a href="/admin/dashboard" class="nav-link no-underline list-none block h-full w-full leading-[65px] text-[25px] font-roboto-condensed pl-[25px] hover:bg-black hover:text-white text-white bg-black">
+                <a href="/admin/dashboard"
+                    class="nav-link no-underline list-none block h-full w-full leading-[65px] text-[25px] font-roboto-condensed pl-[25px] hover:bg-black hover:text-white text-white bg-black">
                     <i class="fa-solid fa-house w-[30px]"></i>
                     Trang chủ
                 </a>
             </li>
             <li>
-                <a href="/admin/orders" class="nav-link no-underline list-none block h-full w-full leading-[65px] text-[25px] font-roboto-condensed text-black pl-[25px] hover:bg-black hover:text-white">
+                <a href="/admin/orders"
+                    class="nav-link no-underline list-none block h-full w-full leading-[65px] text-[25px] font-roboto-condensed text-black pl-[25px] hover:bg-black hover:text-white">
                     <i class="fa-solid fa-bag-shopping w-[30px]"></i>
                     Đơn đặt hàng
                 </a>
             </li>
             <li>
-                <a href="/admin/products?page=1" class="nav-link no-underline list-none block h-full w-full leading-[65px] text-[25px] font-roboto-condensed pl-[25px] hover:bg-black hover:text-white ">
-                    <i class="fa-solid fa-utensils w-[30px]"></i>
-                    Thực đơn
+                <a href="/admin/products?page=1"
+                    class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors rounded-lg">
+                    <i class="fas fa-utensils w-5"></i>
+                    <span>Quản lý món ăn</span>
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link no-underline list-none block h-full w-full leading-[65px] text-[25px] font-roboto-condensed text-black pl-[25px] hover:bg-black hover:text-white">
+                <a href="/admin/audit-logs"
+                    class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors rounded-lg">
+                    <i class="fas fa-history w-5"></i>
+                    <span>Lịch sử thay đổi</span>
+                </a>
+            </li>
+            <li>
+                <a href="#"
+                    class="nav-link no-underline list-none block h-full w-full leading-[65px] text-[25px] font-roboto-condensed text-black pl-[25px] hover:bg-black hover:text-white">
                     <i class="fa-solid fa-comment-dots w-[30px]"></i>
                     Đánh giá
                 </a>
             </li>
             <li>
-                <a href="/admin/customer" class="nav-link no-underline list-none block h-full w-full leading-[65px] text-[25px] font-roboto-condensed text-black pl-[25px] hover:bg-black hover:text-white">
+                <a href="/admin/customer"
+                    class="nav-link no-underline list-none block h-full w-full leading-[65px] text-[25px] font-roboto-condensed text-black pl-[25px] hover:bg-black hover:text-white">
                     <i class="fa-solid fa-user-gear w-[30px]"></i>
                     Khách hàng
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link no-underline list-none block h-full w-full leading-[65px] text-[25px] font-roboto-condensed text-black pl-[25px] hover:bg-black hover:text-white">
+                <a href="#"
+                    class="nav-link no-underline list-none block h-full w-full leading-[65px] text-[25px] font-roboto-condensed text-black pl-[25px] hover:bg-black hover:text-white">
                     <i class="fa-solid fa-user-plus w-[30px]"></i>
                     Tuyển dụng
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link no-underline list-none block h-full w-full leading-[65px] text-[20px] font-roboto-condensed text-black pl-[25px] mt-[105px] hover:text-white">
+                <a href="/admin/logout"
+                    class="nav-link no-underline list-none block h-full w-full leading-[65px] text-[20px] font-roboto-condensed text-black pl-[25px] mt-[105px] hover:text-white">
                     <i class="fa-solid fa-right-from-bracket w-[30px]"></i>
                     Đăng xuất
                 </a>

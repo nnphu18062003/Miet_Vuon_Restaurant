@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cài đặt - Miệt Vườn Restaurant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+        crossorigin="anonymous" />
+    <link href="/css/admin-modern.css" rel="stylesheet">
+    <link href="/css/snackbar.css" rel="stylesheet">
+    <style>
+        .settings-nav {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .settings-tab {
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .settings-tab:hover {
+            color: var(--primary-green);
+        }
+
+        .settings-tab.active {
+            color: var(--primary-green);
+            border-bottom-color: var(--primary-green);
+        }
+
+        .settings-section {
+            display: none;
+        }
+
+        .settings-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-green);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .help-text {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('admin_layouts/admin_sidebar_modern', { currentPage: 'settings' }) %>
+        <%- include('admin_layouts/admin_header_modern', { breadcrumb: ['Hệ thống', 'Cài đặt' ], user: locals.user ||
+            {}, hasNotifications: false }) %>
+
+            <main class="modern-content">
+                <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: start;">
+                    <div>
+                        <h1
+                            style="font-size: 1.875rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem;">
+                            Cài đặt Hệ thống
+                        </h1>
+                        <p style="color: var(--gray-600);">Quản lý cấu hình chung và thanh toán</p>
+                    </div>
+                    <button type="submit" form="settingsForm" class="btn-modern btn-primary"
+                        style="padding: 0.75rem 1.5rem;">
+                        <i class="fas fa-save"></i> Lưu thay đổi
+                    </button>
+                </div>
+
+                <div class="modern-card">
+                    <div class="card-body">
+                        <div class="settings-nav">
+                            <div class="settings-tab active" onclick="switchTab('general')">
+                                <i class="fas fa-store"></i> Thông tin chung
+                            </div>
+                            <div class="settings-tab" onclick="switchTab('payment')">
+                                <i class="fas fa-credit-card"></i> Thanh toán
+                            </div>
+                            <div class="settings-tab" onclick="switchTab('security')">
+                                <i class="fas fa-shield-alt"></i> Bảo mật & Wifi
+                            </div>
+                        </div>
+
+                        <form id="settingsForm" action="/admin/settings/update" method="POST">
+                            <!-- General Tab -->
+                            <div id="general" class="settings-section active">
+                                <div
+                                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                                    <div class="form-group">
+                                        <label class="form-label">Tên nhà hàng</label>
+                                        <input type="text" class="form-control" name="site_name"
+                                            value="<%= settings.site_name || '' %>"
+                                            placeholder="VD: Miệt Vườn Restaurant">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Số điện thoại liên hệ</label>
+                                        <input type="text" class="form-control" name="site_phone"
+                                            value="<%= settings.site_phone || '' %>" placeholder="VD: 0901234567">
+                                    </div>
+                                    <div class="form-group" style="grid-column: 1 / -1;">
+                                        <label class="form-label">Địa chỉ</label>
+                                        <input type="text" class="form-control" name="site_address"
+                                            value="<%= settings.site_address || '' %>"
+                                            placeholder="VD: 123 Đường ABC, Quận 1, TP.HCM">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Tab -->
+                            <div id="payment" class="settings-section">
+                                <h3
+                                    style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1.5rem; color: var(--gray-900);">
+                                    Cấu hình Chuyển khoản (VietQR)</h3>
+                                <div
+                                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                                    <div class="form-group">
+                                        <label class="form-label">Ngân hàng (Mã)</label>
+                                        <input type="text" class="form-control" name="bank_code"
+                                            value="<%= settings.bank_code || '' %>" placeholder="VD: MB, VCB, ACB">
+                                        <p class="help-text">Mã ngân hàng (BinID hoặc tên viết tắt phổ biến)</p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Số tài khoản</label>
+                                        <input type="text" class="form-control" name="bank_number"
+                                            value="<%= settings.bank_number || '' %>" placeholder="VD: 999988887777">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Tên chủ tài khoản</label>
+                                        <input type="text" class="form-control" name="bank_owner"
+                                            value="<%= settings.bank_owner || '' %>" placeholder="VD: NGUYEN VAN A">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Giao diện QR</label>
+                                        <select class="form-control" name="payment_template">
+                                            <option value="print" <%=settings.payment_template==='print' ? 'selected'
+                                                : '' %>>Print (Đầy đủ thông tin)</option>
+                                            <option value="compact" <%=settings.payment_template==='compact'
+                                                ? 'selected' : '' %>>Compact (Gọn gàng)</option>
+                                            <option value="qr_only" <%=settings.payment_template==='qr_only'
+                                                ? 'selected' : '' %>>QR Only (Chỉ mã QR)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <h3
+                                    style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1.5rem; color: var(--gray-900);">
+                                    Cấu hình Momo</h3>
+                                <div
+                                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                                    <div class="form-group">
+                                        <label class="form-label">Số điện thoại Momo</label>
+                                        <input type="text" class="form-control" name="momo_phone"
+                                            value="<%= settings.momo_phone || '' %>" placeholder="VD: 0901234567">
+                                        <p class="help-text">Dùng để tạo link thanh toán Momo hoặc hiển thị QR cá nhân
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Security Tab -->
+                            <div id="security" class="settings-section">
+                                <h3
+                                    style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1.5rem; color: var(--gray-900);">
+                                    Thông tin Wifi quán</h3>
+                                <div
+                                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                                    <div class="form-group">
+                                        <label class="form-label">Tên Wifi (SSID)</label>
+                                        <input type="text" class="form-control" name="wifi_ssid"
+                                            value="<%= settings.wifi_ssid || '' %>">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Mật khẩu Wifi</label>
+                                        <input type="text" class="form-control" name="wifi_password"
+                                            value="<%= settings.wifi_password || '' %>">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <%- include('../admin_layouts/admin_footer_modern') %>
+            </main>
+
+            <script src="/js/snackbar.js"></script>
+            <script>
+                function switchTab(tabId) {
+                    // Update tabs
+                    document.querySelectorAll('.settings-tab').forEach(tab => tab.classList.remove('active'));
+                    event.currentTarget.classList.add('active');
+
+                    // Update contents
+                    document.querySelectorAll('.settings-section').forEach(sec => sec.classList.remove('active'));
+                    document.getElementById(tabId).classList.add('active');
+
+                    // Update URL hash (optional)
+                    // window.location.hash = tabId;
+                }
+
+                // Check hash on load
+                // if(window.location.hash) {
+                //     const tab = window.location.hash.substring(1);
+                //     // click logic...
+                // }
+            </script>
+</body>
+
+</html>

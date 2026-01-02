@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth font-sans">
+
+<head>
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Logs - Miet Vuon Restaurant Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+        crossorigin="anonymous" />
+    <link href="/css/main.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="main" class="relative">
+        <%- include('admin_layouts/admin_mainLayout', { content: locals.body }) %>
+
+            <div class="min-h-screen bg-gray-50 pt-[120px] pb-8">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <!-- Header -->
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-bold text-gray-900">Audit Logs</h1>
+                        <p class="text-gray-600 mt-2">Lịch sử thay đổi và hoạt động trong hệ thống</p>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                        <form method="GET" action="/admin/audit-logs" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Hành động</label>
+                                <select name="action"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500">
+                                    <option value="">Tất cả</option>
+                                    <option value="CREATE" <%=filters.action==='CREATE' ? 'selected' : '' %>>Tạo mới
+                                    </option>
+                                    <option value="UPDATE" <%=filters.action==='UPDATE' ? 'selected' : '' %>>Cập nhật
+                                    </option>
+                                    <option value="DELETE" <%=filters.action==='DELETE' ? 'selected' : '' %>>Xóa
+                                    </option>
+                                    <option value="STATUS_CHANGE" <%=filters.action==='STATUS_CHANGE' ? 'selected' : ''
+                                        %>>Đổi trạng thái</option>
+                                    <option value="LOGIN" <%=filters.action==='LOGIN' ? 'selected' : '' %>>Đăng nhập
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Loại</label>
+                                <select name="entityType"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500">
+                                    <option value="">Tất cả</option>
+                                    <option value="products" <%=filters.entityType==='products' ? 'selected' : '' %>>Sản
+                                        phẩm</option>
+                                    <option value="orders" <%=filters.entityType==='orders' ? 'selected' : '' %>>Đơn
+                                        hàng</option>
+                                    <option value="users" <%=filters.entityType==='users' ? 'selected' : '' %>>Người
+                                        dùng</option>
+                                    <option value="auth" <%=filters.entityType==='auth' ? 'selected' : '' %>>Xác thực
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Từ ngày</label>
+                                <input type="date" name="startDate" value="<%= filters.startDate || '' %>"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Đến ngày</label>
+                                <input type="date" name="endDate" value="<%= filters.endDate || '' %>"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500">
+                            </div>
+
+                            <div class="md:col-span-4 flex gap-3">
+                                <button type="submit"
+                                    class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+                                    <i class="fas fa-filter mr-2"></i>Lọc
+                                </button>
+                                <a href="/admin/audit-logs"
+                                    class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition">
+                                    <i class="fas fa-times mr-2"></i>Xóa bộ lọc
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+                        <p class="text-gray-600">Tổng số: <span class="font-bold text-gray-900">
+                                <%= pagination.total %>
+                            </span> logs</p>
+                    </div>
+
+                    <!-- Logs Table -->
+                    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Thời gian</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Người dùng</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Hành động</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Loại</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            ID</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            IP</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Chi tiết</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <% if (logs.length===0) { %>
+                                        <tr>
+                                            <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                                                <i class="fas fa-inbox text-4xl mb-2"></i>
+                                                <p>Không có log nào</p>
+                                            </td>
+                                        </tr>
+                                        <% } else { %>
+                                            <% logs.forEach(log=> { %>
+                                                <tr class="hover:bg-gray-50">
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                        <%= new Date(log.created_at).toLocaleString('vi-VN') %>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                        <div class="text-gray-900">
+                                                            <%= log.user_email || 'N/A' %>
+                                                        </div>
+                                                        <div class="text-gray-500 text-xs">ID: <%= log.user_id || 'N/A'
+                                                                %>
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <% let actionClass='bg-gray-100 text-gray-800' ; if
+                                                            (log.action==='CREATE' )
+                                                            actionClass='bg-green-100 text-green-800' ; else if
+                                                            (log.action==='UPDATE' )
+                                                            actionClass='bg-blue-100 text-blue-800' ; else if
+                                                            (log.action==='DELETE' )
+                                                            actionClass='bg-red-100 text-red-800' ; else if
+                                                            (log.action==='STATUS_CHANGE' )
+                                                            actionClass='bg-yellow-100 text-yellow-800' ; %>
+                                                            <span
+                                                                class="px-2 py-1 text-xs font-semibold rounded-full <%= actionClass %>">
+                                                                <%= log.action %>
+                                                            </span>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                        <%= log.entity_type %>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                        <%= log.entity_id || '-' %>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                        <%= log.ip_address || '-' %>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                        <button onclick="viewLogDetail(<%= log.log_id %>)"
+                                                            class="text-green-600 hover:text-green-900">
+                                                            <i class="fas fa-eye"></i> Xem
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <% if (pagination.totalPages> 1) { %>
+                            <div
+                                class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                                <div class="flex-1 flex justify-between sm:hidden">
+                                    <% if (pagination.hasPrev) { %>
+                                        <a href="?page=<%= pagination.page - 1 %>"
+                                            class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                            Trước
+                                        </a>
+                                        <% } %>
+                                            <% if (pagination.hasNext) { %>
+                                                <a href="?page=<%= pagination.page + 1 %>"
+                                                    class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                                    Sau
+                                                </a>
+                                                <% } %>
+                                </div>
+                                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-700">
+                                            Trang <span class="font-medium">
+                                                <%= pagination.page %>
+                                            </span> / <span class="font-medium">
+                                                <%= pagination.totalPages %>
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                                            <% if (pagination.hasPrev) { %>
+                                                <a href="?page=<%= pagination.page - 1 %>"
+                                                    class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                    <i class="fas fa-chevron-left"></i>
+                                                </a>
+                                                <% } %>
+                                                    <% for(let i=1; i <=pagination.totalPages; i++) { %>
+                                                        <a href="?page=<%= i %>"
+                                                            class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium <%= i === pagination.page ? 'bg-green-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50' %>">
+                                                            <%= i %>
+                                                        </a>
+                                                        <% } %>
+                                                            <% if (pagination.hasNext) { %>
+                                                                <a href="?page=<%= pagination.page + 1 %>"
+                                                                    class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                                    <i class="fas fa-chevron-right"></i>
+                                                                </a>
+                                                                <% } %>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <!-- Log Detail Modal -->
+    <div id="logDetailModal"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold">Chi tiết Log</h3>
+                    <button onclick="closeLogDetail()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                <div id="logDetailContent" class="space-y-4">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function viewLogDetail(logId) {
+            try {
+                console.log('Fetching log detail for ID:', logId);
+                const response = await fetch(`/admin/audit-logs/${logId}`);
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const log = await response.json();
+                console.log('Log data:', log);
+
+                let oldValuesHtml = '<pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto">-</pre>';
+                let newValuesHtml = '<pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto">-</pre>';
+
+                if (log.old_values) {
+                    try {
+                        const oldData = typeof log.old_values === 'string' ? JSON.parse(log.old_values) : log.old_values;
+                        oldValuesHtml = `<pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto">${JSON.stringify(oldData, null, 2)}</pre>`;
+                    } catch (e) {
+                        console.error('Error parsing old_values:', e);
+                        oldValuesHtml = `<pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto">${log.old_values}</pre>`;
+                    }
+                }
+                if (log.new_values) {
+                    try {
+                        const newData = typeof log.new_values === 'string' ? JSON.parse(log.new_values) : log.new_values;
+                        newValuesHtml = `<pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto">${JSON.stringify(newData, null, 2)}</pre>`;
+                    } catch (e) {
+                        console.error('Error parsing new_values:', e);
+                        newValuesHtml = `<pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto">${log.new_values}</pre>`;
+                    }
+                }
+
+                document.getElementById('logDetailContent').innerHTML = `
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><strong>Log ID:</strong> ${log.log_id}</div>
+                        <div><strong>Thời gian:</strong> ${new Date(log.created_at).toLocaleString('vi-VN')}</div>
+                        <div><strong>Người dùng:</strong> ${log.user_email || 'N/A'} (ID: ${log.user_id || 'N/A'})</div>
+                        <div><strong>Hành động:</strong> ${log.action}</div>
+                        <div><strong>Loại:</strong> ${log.entity_type}</div>
+                        <div><strong>Entity ID:</strong> ${log.entity_id || '-'}</div>
+                        <div><strong>IP:</strong> ${log.ip_address || '-'}</div>
+                        <div><strong>User Agent:</strong> ${log.user_agent || '-'}</div>
+                    </div>
+                    <div class="mt-4">
+                        <strong>Giá trị cũ:</strong>
+                        ${oldValuesHtml}
+                    </div>
+                    <div class="mt-4">
+                        <strong>Giá trị mới:</strong>
+                        ${newValuesHtml}
+                    </div>
+                `;
+
+                document.getElementById('logDetailModal').classList.remove('hidden');
+            } catch (error) {
+                console.error('Error loading log detail:', error);
+                alert(`Không thể tải chi tiết log: ${error.message}`);
+            }
+        }
+
+        function closeLogDetail() {
+            document.getElementById('logDetailModal').classList.add('hidden');
+        }
+    </script>
+</body>
+
+</html>
