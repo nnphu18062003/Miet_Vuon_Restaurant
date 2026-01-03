@@ -31,11 +31,14 @@ app.use(session({
 }));
 app.use(flash());
 app.use((req, res, next) => {
-  res.locals.message = req.flash('error');
+  res.locals.success = req.flash('success');
+  res.locals.error = req.flash('error');
+  res.locals.message = res.locals.error; // Keep legacy support just in case
   next();
 });
 
 require('./customer/login/passport_cus.js');
+require('./customer/login/passport_google.js');
 // require('./admin/login/passport.js');
 
 app.use(passport.initialize());
@@ -83,6 +86,7 @@ app.use("/dist", express.static("dist"));
 app.use("/", homeRouter);
 app.use("/register", registrationRouter);
 app.use("/login", loginRouter);
+app.use("/auth", require('./customer/login/authRouter'));
 app.use("/category", categoryRouter)
 
 

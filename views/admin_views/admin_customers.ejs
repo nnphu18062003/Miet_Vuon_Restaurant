@@ -98,6 +98,7 @@
                                         <tr>
                                             <th>Khách hàng</th>
                                             <th>Liên hệ</th>
+                                            <th>Trạng thái</th>
                                             <th>Tổng đơn</th>
                                             <th>Tổng chi tiêu</th>
                                             <th>Ngày tham gia</th>
@@ -117,6 +118,10 @@
                                                         <div>
                                                             <div style="font-weight: 500; color: var(--gray-900);">
                                                                 <%= customer.name || 'N/A' %>
+                                                                    <% if (customer.google_id) { %>
+                                                                        <i class="fab fa-google text-blue-500 ml-1"
+                                                                            title="Đăng nhập Google"></i>
+                                                                        <% } %>
                                                             </div>
                                                             <div style="font-size: 0.875rem; color: var(--gray-500);">
                                                                 ID: <%= customer.id %>
@@ -130,6 +135,13 @@
                                                             <i class="fas fa-envelope"
                                                                 style="color: var(--gray-400); margin-right: 0.5rem;"></i>
                                                             <%= customer.email || 'N/A' %>
+                                                                <% if (customer.email_verified) { %>
+                                                                    <i class="fas fa-check-circle text-green-500 ml-1"
+                                                                        title="Đã xác thực Email"></i>
+                                                                    <% } else { %>
+                                                                        <i class="fas fa-exclamation-circle text-yellow-500 ml-1"
+                                                                            title="Chưa xác thực Email"></i>
+                                                                        <% } %>
                                                         </div>
                                                         <div style="color: var(--gray-600);">
                                                             <i class="fas fa-phone"
@@ -137,6 +149,19 @@
                                                             <%= customer.phone || 'N/A' %>
                                                         </div>
                                                     </div>
+                                                </td>
+                                                <td>
+                                                    <% if (customer.status==='locked' ) { %>
+                                                        <span
+                                                            class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">
+                                                            <i class="fas fa-lock mr-1"></i> Bị khóa
+                                                        </span>
+                                                        <% } else { %>
+                                                            <span
+                                                                class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
+                                                                <i class="fas fa-check mr-1"></i> Hoạt động
+                                                            </span>
+                                                            <% } %>
                                                 </td>
                                                 <td>
                                                     <span
@@ -149,14 +174,34 @@
                                                         VNĐ
                                                 </td>
                                                 <td style="color: var(--gray-600); font-size: 0.875rem;">
-                                                    <%= new Date(customer.created_at).toLocaleDateString('vi-VN') %>
+                                                    <%= new Date(customer.create_at ||
+                                                        customer.created_at).toLocaleDateString('vi-VN') %>
                                                 </td>
                                                 <td>
-                                                    <button onclick="viewCustomerOrders(<%= customer.id %>)"
-                                                        class="btn-modern btn-outline"
-                                                        style="font-size: 0.875rem; padding: 0.5rem 1rem;">
-                                                        <i class="fas fa-history"></i> Lịch sử
-                                                    </button>
+                                                    <div class="flex gap-2">
+                                                        <button onclick="viewCustomerOrders(<%= customer.id %>)"
+                                                            class="btn-modern btn-outline"
+                                                            style="font-size: 0.875rem; padding: 0.5rem 0.75rem;"
+                                                            title="Lịch sử đơn hàng">
+                                                            <i class="fas fa-history"></i>
+                                                        </button>
+                                                        <% if (customer.status==='locked' ) { %>
+                                                            <button onclick="toggleStatus(<%= customer.id %>, 'active')"
+                                                                class="btn-modern"
+                                                                style="font-size: 0.875rem; padding: 0.5rem 0.75rem; background-color: #DEF7EC; color: #03543F; border: 1px solid #DEF7EC;"
+                                                                title="Mở khóa tài khoản">
+                                                                <i class="fas fa-unlock"></i>
+                                                            </button>
+                                                            <% } else { %>
+                                                                <button
+                                                                    onclick="toggleStatus(<%= customer.id %>, 'locked')"
+                                                                    class="btn-modern"
+                                                                    style="font-size: 0.875rem; padding: 0.5rem 0.75rem; background-color: #FDE8E8; color: #9B1C1C; border: 1px solid #FDE8E8;"
+                                                                    title="Khóa tài khoản">
+                                                                    <i class="fas fa-lock"></i>
+                                                                </button>
+                                                                <% } %>
+                                                    </div>
                                                 </td>
                                             </tr>
                                             <% }) %>
@@ -226,6 +271,33 @@
                     } catch (error) {
                         console.error('Error:', error);
                         Snackbar.error('Không thể tải lịch sử đơn hàng');
+                    }
+                }
+
+                async function toggleStatus(customerId, newStatus) {
+                    if (!confirm(`Bạn có chắc chắn muốn ${newStatus === 'locked' ? 'khóa' : 'mở khóa'} tài khoản này?`)) {
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/admin/customer/${customerId}/status`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ status: newStatus })
+                        });
+
+                        const data = await response.json();
+                        if (data.ok) {
+                            Snackbar.success('Cập nhật trạng thái thành công');
+                            setTimeout(() => location.reload(), 1000);
+                        } else {
+                            Snackbar.error(data.message || 'Có lỗi xảy ra');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        Snackbar.error('Có lỗi xảy ra khi cập nhật trạng thái');
                     }
                 }
 

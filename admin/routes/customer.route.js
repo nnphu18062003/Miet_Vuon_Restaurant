@@ -6,6 +6,8 @@ const customerController = require('../controllers/customerController');
 router.get('/', customerController.getCustomers);
 
 // Get customer order history
+
 router.get('/:id/orders', customerController.getCustomerOrders);
+router.put('/:id/status', customerController.toggleStatus);
 
 module.exports = router;

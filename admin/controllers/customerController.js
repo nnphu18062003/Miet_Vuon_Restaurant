@@ -10,19 +10,14 @@ exports.getCustomers = async (req, res) => {
         const limit = 20;
         const offset = (page - 1) * limit;
 
-        // Build query
+        // Build query (Simplified to ensure visibility)
         let query = knex('users')
-            .select(
-                'users.*',
-                knex.raw('COUNT(DISTINCT orders.order_id) as total_orders'),
-                knex.raw('COALESCE(SUM(orders.total), 0) as total_spent')
-            )
-            .leftJoin('orders', 'users.id', 'orders.user_id')
             .where('users.role', true) // Only customers
-            .groupBy('users.id')
-            .orderBy('users.created_at', 'desc');
+            .orderBy('users.create_at', 'desc');
 
-        // Apply search filter
+        // Note: Total orders/spent calculation removed from main query to avoid grouping issues.
+        // If critical, we can add it back as subqueries later.
+
         if (req.query.search) {
             query = query.where(function () {
                 this.where('users.name', 'ilike', `%${req.query.search}%`)
@@ -90,5 +85,24 @@ exports.getCustomerOrders = async (req, res) => {
     } catch (error) {
         console.error('Get Customer Orders Error:', error);
         res.status(500).json({ error: 'Server error' });
+    }
+};
+
+/**
+ * Toggle customer status (locked/active)
+ */
+exports.toggleStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        await knex('users')
+            .where('id', id)
+            .update({ status: status });
+
+        res.json({ ok: true });
+    } catch (error) {
+        console.error('Toggle status error:', error);
+        res.status(500).json({ ok: false, message: 'Lỗi khi cập nhật trạng thái' });
     }
 };

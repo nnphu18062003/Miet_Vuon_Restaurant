@@ -3,25 +3,29 @@
     <!-- Logo và Tên Thương Hiệu -->
     <div class="flex items-center">
       <a href="/" class="flex items-center">
-        <img src="/images/logo1.png" alt="Logo" 
-             class="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 rounded-full mr-2 sm:mr-3 border-2 border-white object-contain" />
+        <img src="/images/logo1.png" alt="Logo"
+          class="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 rounded-full mr-2 sm:mr-3 border-2 border-white object-contain" />
         <div class="flex flex-col">
           <span class="text-[#2D4F2B] font-bold uppercase text-lg sm:text-xl md:text-2xl leading-tight">Miet Vuon</span>
-          <span class="text-[#2D4F2B] font-bold uppercase text-sm sm:text-base md:text-xl leading-tight">Restaurant</span>
+          <span
+            class="text-[#2D4F2B] font-bold uppercase text-sm sm:text-base md:text-xl leading-tight">Restaurant</span>
         </div>
       </a>
     </div>
 
     <!-- Menu Điều Hướng -->
-    <nav class="order-3 w-full md:order-2 md:w-auto flex justify-center md:justify-center items-center gap-4 md:gap-8 mt-2 md:mt-0 text-sm sm:text-base md:text-lg">
+    <nav
+      class="order-3 w-full md:order-2 md:w-auto flex justify-center md:justify-center items-center gap-4 md:gap-8 mt-2 md:mt-0 text-sm sm:text-base md:text-lg">
       <a href="/" class="text-white hover:underline leading-none uppercase font-bold whitespace-nowrap">Trang chủ</a>
-      <a href="/category" class="text-white hover:underline leading-none uppercase font-bold whitespace-nowrap">Thực đơn</a>
-      <a href="/about" class="text-white hover:underline leading-none uppercase font-bold whitespace-nowrap">Về nhà hàng</a>
+      <a href="/category" class="text-white hover:underline leading-none uppercase font-bold whitespace-nowrap">Thực
+        đơn</a>
+      <a href="/about" class="text-white hover:underline leading-none uppercase font-bold whitespace-nowrap">Về nhà
+        hàng</a>
     </nav>
 
     <!-- Biểu Tượng -->
     <div class="flex items-center space-x-3 sm:space-x-4 order-2 md:order-3">
-      
+
       <!-- User Profile Dropdown -->
       <div class="relative group" style="z-index: 1000;">
         <a href="#" class="text-white hover:text-gray-300 relative z-10">
@@ -31,9 +35,19 @@
         <div
           class="absolute right-0 top-full mt-2 w-48 bg-[#EBF4DD] border border-gray-300 rounded-md shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200"
           style="z-index: 1001;">
-          <a href="/account" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-t-md">Tài khoản</a>
-          <a href="/orderList" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Đơn mua</a>
-          <a href="/login" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-b-md">Đăng nhập</a>
+          <% if (locals.user) { %>
+            <a href="/account" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-t-md">
+              <i class="fas fa-user-circle mr-2"></i>Chào, <%= user.name || 'Bạn' %>
+            </a>
+            <a href="/orderList" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Đơn mua</a>
+            <hr class="my-1 border-gray-300">
+            <a href="/logout" class="block px-4 py-2 text-red-600 hover:bg-red-50 rounded-b-md">
+              <i class="fas fa-sign-out-alt mr-2"></i>Đăng xuất
+            </a>
+            <% } else { %>
+              <a href="/login" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-t-md">Đăng nhập</a>
+              <a href="/register" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-b-md">Đăng ký</a>
+              <% } %>
         </div>
       </div>
 

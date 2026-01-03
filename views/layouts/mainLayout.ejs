@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>
         <%= title %>
@@ -17,42 +18,60 @@
 <body class="bg-gray-100">
     <div>
         <%- include('header') %>
-        <!-- #endregion Header -->
+            <!-- #endregion Header -->
 
-        <!-- <main class="">
+            <!-- <main class="">
             <%- content %>
         </main> -->
     </div>
 
-   
+
 
     <script src="/js/header.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-           
-            const user = <%- JSON.stringify(user) %>;
+            // Server-side user injection
+            const user = <% - JSON.stringify(locals.user || null) %>;
 
+            // Header Logic
             if (user) {
                 const loginLink = document.querySelector('a[href="/login"]');
                 const registerLink = document.querySelector('a[href="/register"]');
-    
+
                 if (loginLink) {
                     loginLink.innerHTML = '<i class="fas fa-sign-out-alt mr-2"></i>Đăng xuất';
-                    loginLink.href = '/logout'; 
+                    loginLink.href = '/logout';
                 }
-    
+
                 if (registerLink) {
                     registerLink.style.display = 'none';
                 }
-            } else {
-                
-                console.log("User chưa đăng nhập, không có thông tin user.");
+            }
+
+            // GLOBAL FLASH MESSAGES HANDLER
+            const successMessages = <% - JSON.stringify(locals.success || []) %>;
+            const errorMessages = <% - JSON.stringify(locals.error || []) %>;
+            const legacyMessage = <% - JSON.stringify(locals.message || "") %>;
+
+            if (successMessages && successMessages.length > 0) {
+                const msg = Array.isArray(successMessages) ? successMessages[0] : successMessages;
+                if (msg) showSnackbar(msg, 'success');
+            }
+
+            if (errorMessages && errorMessages.length > 0) {
+                const msg = Array.isArray(errorMessages) ? errorMessages[0] : errorMessages;
+                if (msg) showSnackbar(msg, 'error');
+            }
+
+            if (legacyMessage && typeof legacyMessage === 'string' && legacyMessage.length > 0) {
+                const type = legacyMessage.toLowerCase().includes('thành công') || legacyMessage.toLowerCase().includes('success') ? 'success' : 'error';
+                showSnackbar(legacyMessage, type);
             }
         });
     </script>
-    
-    
+
+
 </body>
 
 </html>
