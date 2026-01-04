@@ -1,10 +1,10 @@
-name: Deploy to VM
+name: Production Deploy
 
 on:
   push:
     branches:
       - main
-
+      
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -21,19 +21,17 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            # Debug Info
+            echo "----------- START DEPLOY -----------"
             echo "User: $(whoami)"
-            echo "WorkDir: $(pwd)"
-            ls -la /home/lunix/
             
-            # Navigate to project directory
+            # Go to folder
             cd /home/lunix/Miet_Vuon_Restaurant
             
-            # Pull latest code
+            # Update code
             git pull origin main
             
-            # Restart containers with new code
+            # Restart Docker
             sudo docker-compose up -d --build
-            
-            # Clean up unused images to save space
             sudo docker image prune -a -f
+            echo "----------- DEPLOY SUCCESS -----------"
+
