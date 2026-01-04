@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 
 const sendVerificationEmail = async (to, token, name) => {
     // Determine base URL based on environment
-    const baseUrl = process.env.BASE_URL || 'http://localhost:4000';
+    const baseUrl = process.env.BASE_URL || 'https://mietvuon.lunix.codes';
     const link = `${baseUrl}/register/verify?token=${token}`;
 
     const mailOptions = {
