@@ -79,6 +79,34 @@ module.exports = function (app) {
     const knexConfig = require('../knexfile');
     const knex = require('knex')(knexConfig[process.env.NODE_ENV || 'development']);
 
+    // Route to fix database categories programmatically
+    router.get('/fix-categories', ensureAdmin, async (req, res) => {
+        try {
+            console.log("Fixing categories triggered by user...");
+
+            // Delete old data
+            await knex('products').del();
+            await knex('categories').del();
+
+            // Insert new categories
+            await knex('categories').insert([
+                { category_id: 1, name: 'Đặc sản Miền Tây' },
+                { category_id: 2, name: 'Lẩu & Nướng' },
+                { category_id: 3, name: 'Cơm & Món Mặn' },
+                { category_id: 4, name: 'Bánh Dân Gian' },
+                { category_id: 5, name: 'Đồ Uống' }
+            ]);
+
+            console.log("Categories fixed successfully.");
+            req.flash('success', 'Đã khôi phục danh mục thành công! Hãy thêm lại món ăn.');
+            res.redirect('/admin/products');
+        } catch (error) {
+            console.error('Fix categories error:', error);
+            req.flash('error', 'Lỗi khi khôi phục danh mục: ' + error.message);
+            res.redirect('/admin/dashboard');
+        }
+    });
+
 
     router.get('/login', (req, res) => {
         res.render('admin_views/admin_login', { error: req.flash('error'), success: req.flash('success') });
