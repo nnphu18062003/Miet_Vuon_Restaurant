@@ -248,7 +248,7 @@ module.exports = function (app) {
         // The user didn't show sidebar. Let's standardise on /admin/products
         try {
             const page = parseInt(req.query.page) || 1;
-            const limit = 10;
+            const limit = 12;
             const offset = (page - 1) * limit;
 
             const search = req.query.search || '';
