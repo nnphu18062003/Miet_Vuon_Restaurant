@@ -21,6 +21,11 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
+            # Debug Info
+            echo "User: $(whoami)"
+            echo "WorkDir: $(pwd)"
+            ls -la /home/lunix/
+            
             # Navigate to project directory
             cd /home/lunix/Miet_Vuon_Restaurant
             
