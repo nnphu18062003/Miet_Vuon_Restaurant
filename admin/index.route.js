@@ -2,11 +2,17 @@ const express = require('express');
 const passport = require('passport');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const router = express.Router();
 
 require('./login/passport.js');
 
 // Configure multer for file uploads
+const uploadDir = 'public/uploads/';
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'public/uploads/');
@@ -346,7 +352,7 @@ module.exports = function (app) {
             res.json({ ok: true, product_id });
         } catch (error) {
             console.error('Create product error:', error);
-            res.status(500).json({ ok: false, message: 'Không thể thêm món' });
+            res.status(500).json({ ok: false, message: 'Không thể thêm món: ' + error.message });
         }
     });
 
@@ -392,7 +398,7 @@ module.exports = function (app) {
             res.json({ ok: true });
         } catch (error) {
             console.error('Update product error:', error);
-            res.status(500).json({ ok: false, message: 'Không thể cập nhật món' });
+            res.status(500).json({ ok: false, message: 'Không thể cập nhật món: ' + error.message });
         }
     });
 
@@ -418,7 +424,7 @@ module.exports = function (app) {
             res.json({ ok: true });
         } catch (error) {
             console.error('Delete product error:', error);
-            res.status(500).json({ ok: false, message: 'Không thể xóa món' });
+            res.status(500).json({ ok: false, message: 'Không thể xóa món: ' + error.message });
         }
     });
 

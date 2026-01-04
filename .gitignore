@@ -1,7 +1,8 @@
 node_modules
 .env
 dist
-uploads
+public/uploads/*
+!public/uploads/.gitkeep
 coverage
 .DS_Store
 .idea
