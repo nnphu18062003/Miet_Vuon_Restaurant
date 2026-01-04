@@ -94,7 +94,14 @@ document.getElementById('productForm')?.addEventListener('submit', async (e) => 
             body: formData
         });
 
-        const data = await response.json();
+        let data;
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            data = await response.json();
+        } else {
+            const text = await response.text();
+            throw new Error(`Server returned ${response.status}: ${text.substring(0, 100)}`);
+        }
 
         if (data.ok) {
             Snackbar.success(productId ? 'Cập nhật món thành công!' : 'Thêm món thành công!');
@@ -103,8 +110,8 @@ document.getElementById('productForm')?.addEventListener('submit', async (e) => 
             Snackbar.error(data.message || 'Có lỗi xảy ra');
         }
     } catch (error) {
-        console.error('Error:', error);
-        Snackbar.error('Không thể lưu món');
+        console.error('Error details:', error);
+        Snackbar.error('Lỗi: ' + error.message);
     }
 });
 
