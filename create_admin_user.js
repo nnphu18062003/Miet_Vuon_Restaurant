@@ -10,10 +10,10 @@ async function createAdmin() {
     try {
         console.log("Generating password...");
         const passwordData = await genPassword('admin123');
-        
+
         const adminUser = {
             name: 'Admin',
-            email: 'admin@gmail.com',
+            email: 'nguyenngocphu18062003@gmail.com',
             phone: '0000000000',
             password: passwordData.hashedPassword,
             salt: passwordData.salt,
@@ -23,11 +23,11 @@ async function createAdmin() {
         };
 
         console.log("Checking if admin exists...");
-        const existingUser = await knex('users').where({ email: 'admin@gmail.com' }).first();
+        const existingUser = await knex('users').where({ email: 'nguyenngocphu18062003@gmail.com' }).first();
 
         if (existingUser) {
-            console.log("User admin@gmail.com already exists. Updating role to admin...");
-            await knex('users').where({ email: 'admin@gmail.com' }).update({
+            console.log("User nguyenngocphu18062003@gmail.com already exists. Updating role to admin...");
+            await knex('users').where({ email: 'nguyenngocphu18062003@gmail.com' }).update({
                 role: false,
                 password: passwordData.hashedPassword,
                 salt: passwordData.salt,

@@ -22,28 +22,42 @@ const store = new ConnectSessionKnexStore({
 
 
 const app = express();
-app.use(session({
+
+const sessionConfig = {
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: false,
   store,
   cookie: { maxAge: 1000000 },
-}));
+};
+
+// Conditional Session Middleware
+app.use((req, res, next) => {
+  const isAdmin = req.path.startsWith('/admin');
+  const config = {
+    ...sessionConfig,
+    name: isAdmin ? 'admin.sid' : 'shop.sid', // Distinct cookies
+  };
+
+  session(config)(req, res, () => {
+    passport.initialize()(req, res, () => {
+      passport.session()(req, res, next);
+    });
+  });
+});
+
+
+
 app.use(flash());
 app.use((req, res, next) => {
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
-  res.locals.message = res.locals.error; // Keep legacy support just in case
+  res.locals.message = res.locals.error;
   next();
 });
 
 require('./customer/login/passport_cus.js');
 require('./customer/login/passport_google.js');
-// require('./admin/login/passport.js');
-
-app.use(passport.initialize());
-app.use(passport.session());
-
 
 const registrationRouter = require("./customer/registration/registrationRouter");
 const searchRouter = require("./customer/search/searchRouter");

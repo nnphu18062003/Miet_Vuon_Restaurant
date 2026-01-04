@@ -2,7 +2,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const validPassword = require('../Utils/passwordUtils').validPassword;
 const loginService = require('./loginService');
-const title = "Login - Supershop - GA05";
+const title = "Login - Miet Vuon Restaurant";
 
 const verifyCallback = async (email, password, done) => {
     try {
