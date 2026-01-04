@@ -21,14 +21,14 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            # Navigate to project directory (Adjust path if needed)
-            cd /root/restaurant_app 
+            # Navigate to project directory
+            cd ~/Miet_Vuon_Restaurant
             
             # Pull latest code
             git pull origin main
             
             # Restart containers with new code
-            docker-compose up -d --build
+            sudo docker-compose up -d --build
             
             # Clean up unused images to save space
-            docker image prune -a -f
+            sudo docker image prune -a -f
