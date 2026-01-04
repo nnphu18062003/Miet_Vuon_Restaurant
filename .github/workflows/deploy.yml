@@ -22,7 +22,7 @@ jobs:
           port: 22
           script: |
             # Navigate to project directory
-            cd ~/Miet_Vuon_Restaurant
+            cd /home/lunix/Miet_Vuon_Restaurant
             
             # Pull latest code
             git pull origin main
