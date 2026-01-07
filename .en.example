@@ -1,0 +1,17 @@
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=123
+DB_NAME=restaurant_project
+SERVER_PORT=4000
+SERVER_HOST=localhost
+CLOUDINARY_CLOUD_NAME=dv6zkfg1o
+CLOUDINARY_API_KEY=379196162733721
+CLOUDINARY_API_SECRET=LuDbo1O5Pj55FK-rTfKKDP9itl4
+
+EMAIL_PASS=tgfe svwn vizx xwdq
+EMAIL_USER=ducluongtran597@gmail.com
+
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+BASE_URL=http://localhost:4000

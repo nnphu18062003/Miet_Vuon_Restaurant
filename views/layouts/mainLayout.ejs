@@ -11,6 +11,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="referrer" content="always" />
     <meta name="description" content="TailwindCSS Ecommerce Template" />
+    <link rel="stylesheet" href="/css/snackbar.css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
 </head>
@@ -28,6 +29,7 @@
 
 
     <script src="/js/header.js"></script>
+    <script src="/js/snackbar.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -53,6 +55,16 @@
             const successMessages = <% - JSON.stringify(locals.success || []) %>;
             const errorMessages = <% - JSON.stringify(locals.error || []) %>;
             const legacyMessage = <% - JSON.stringify(locals.message || "") %>;
+
+            // Helper to bridge old code calling showSnackbar to new SnackbarManager
+            const showSnackbar = (msg, type) => {
+                if (window.Snackbar) {
+                    window.Snackbar.show(msg, type);
+                } else {
+                    console.warn('Snackbar not loaded', msg);
+                    alert(msg);
+                }
+            };
 
             if (successMessages && successMessages.length > 0) {
                 const msg = Array.isArray(successMessages) ? successMessages[0] : successMessages;

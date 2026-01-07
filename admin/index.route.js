@@ -4,6 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const router = express.Router();
+const productController = require('./controllers/productController');
 
 require('./login/passport.js');
 
@@ -51,9 +52,7 @@ function ensureAdmin(req, res, next) {
     res.redirect('/admin/login');
 }
 
-// Database connection
-// Database connection
-const knex = require('../config/database');
+const pool = require('../config/database');
 const auditLogger = require('../services/auditLogger');
 
 module.exports = function (app) {
@@ -194,11 +193,6 @@ module.exports = function (app) {
     router.get('/dashboard', ensureAdmin, async (req, res) => {
         try {
             // Fetch revenue (sum of valid orders)
-            // Assuming status 'Completed' or similar implies recognised revenue. 
-            // For now, let's take all non-canceled orders.
-            // Or if status_payment='Paid'
-
-            // Let's sum 'total' from orders table
             const revenueResult = await knex('orders')
                 .sum('total as revenue')
                 .whereNot('status', 'Canceled') // Exclude canceled orders
@@ -240,12 +234,7 @@ module.exports = function (app) {
     });
 
     // Menu Manager Route (Render View)
-    // knex is already initialized above
-
     router.get('/products', ensureAdmin, async (req, res) => { // Matched with sidebar link
-        // Wait, where is the menu page linked? 
-        // Let's assume /admin/products or check sidebar.
-        // The user didn't show sidebar. Let's standardise on /admin/products
         try {
             const page = parseInt(req.query.page) || 1;
             const limit = 12;
@@ -257,7 +246,7 @@ module.exports = function (app) {
             let query = knex('products')
                 .leftJoin('categories', 'products.category_id', 'categories.category_id')
                 .select('products.*', 'categories.name as category_name')
-                .where('products.deleted', false); // Assuming soft delete logic or remove if no 'deleted' column
+                .where('products.deleted', false);
 
             if (search) {
                 query = query.where('products.name', 'ilike', `%${search}%`);
@@ -269,7 +258,7 @@ module.exports = function (app) {
             // Pagination after filtering
             const countQuery = knex('products')
                 .count('product_id as count')
-                .where('products.deleted', false); // Keep consistent with main query
+                .where('products.deleted', false);
 
             if (search) {
                 countQuery.where('products.name', 'ilike', `%${search}%`);
@@ -292,8 +281,8 @@ module.exports = function (app) {
             res.render('admin_views/admin_products_new', {
                 products,
                 categories,
-                search: '',
-                category: '',
+                search: search,
+                category: category,
                 pagination: {
                     page,
                     totalPages,
@@ -443,4 +432,3 @@ module.exports = function (app) {
         res.status(404).render('admin_views/admin_404', { layout: false });
     });
 };
-

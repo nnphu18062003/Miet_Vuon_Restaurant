@@ -128,6 +128,17 @@ app.get('/about', (req, res) => {
   res.render('about', { title: 'Trang chủ' });
 });
 
+// Global Error Handler
+const errorHandler = require('./middlewares/errorHandler');
+const { NotFoundError } = require('./utils/httpErrors');
+
+// 404 Handler for undefined routes
+app.all('*', (req, res, next) => {
+  next(new NotFoundError(`Can't find ${req.originalUrl} on this server!`));
+});
+
+app.use(errorHandler);
+
 
 
 const PORT = process.env.SERVER_PORT || 4000;
