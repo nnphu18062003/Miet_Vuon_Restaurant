@@ -32,11 +32,10 @@ async function syncCategories() {
     console.log("➕ Đang thêm categories mới...");
     await pool.query(`
       INSERT INTO categories (category_id, name) VALUES
-      (1, 'Đặc sản Miền Tây'),
-      (2, 'Lẩu & Nướng'),
-      (3, 'Cơm & Món Mặn'),
-      (4, 'Bánh Dân Gian'),
-      (5, 'Đồ Uống')
+      (1, 'Khai Vị'),
+      (2, 'Món chính'),
+      (3, 'Món phụ'),
+      (4, 'Đồ uống')
     `);
     console.log("✅ Đã thêm categories mới\n");
 

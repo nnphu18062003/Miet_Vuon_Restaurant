@@ -27,8 +27,8 @@ services:
     environment:
       - DB_HOST=db
       - SERVER_PORT=4000
-    # ports:  <-- Remove public port binding
-    #   - "4000:4000"
+    ports:
+      - "4000:4000"
     depends_on:
       db:
         condition: service_healthy
